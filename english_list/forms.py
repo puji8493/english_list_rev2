@@ -7,7 +7,7 @@ class UserForm(forms.ModelForm):
         fields = '__all__'
 
     def save(self,*args,**kwargs):
-        obj = super(UserForm,self).save(commit=False)
+        obj = super().save(commit=False)
         obj.save()
 
         return obj
