@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>My_english_lists</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>
+</head>
+<body>
+    <hi>プジさんの英文・英単語リスト</hi>
+    <p>{{message|safe}} </p>
+    <br>
+    <table>
+        <tr>
+            <th class="th_id">ID</th>
+            <th class="th_category">カテゴリー</th>
+            <th class="th_ja_word">日本語</th>
+            <th class="th_en_word">英語</th>
+            <th class="th_memo">メモ</th>
+        </tr>
+        {% for item in wordlists %}
+         <tr>
+            <td class="td_id">{{item.id}}</td>
+            <td class="td_category">{{item.category}}</td>
+            <td class="td_ja_word">{{item.ja_word}}</td>
+            <td class="td_en_word">{{item.en_word}}</td>
+            <td class="td_memo">{{item.memo}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+
+
+</body>
+</html>
