@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 
 class WordLists(models.Model):
@@ -7,6 +8,9 @@ class WordLists(models.Model):
     # ユニーク制約などのモデルクラス全体に対する付加情報を記述
     class Meta:
         db_table = 'wordlists'
+
+    def get_absolute_url(self):
+        return reverse_lazy('english_list:detail_word', kwargs={'pk': self.pk})
 
     category = models.CharField('カテゴリー', max_length=50)
     ja_word = models.CharField('日本語', max_length=300)
