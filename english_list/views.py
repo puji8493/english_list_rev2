@@ -39,20 +39,23 @@ class WordDetailView(DetailView):
     #   objectは<WordLists:
     #   {'object': <WordLists: <WordLists ☆ id=9,例外　除外,exception,名詞>>, 'wordlists': <WordLists: <WordLists ☆ id=9,例外　除外,exception,名詞>>, 'view': <english_list.views.WordDetailView object at 0x00000217F48AD840>}
 
-
 class WordUpdateView(UpdateView):
     model = WordLists
     template_name = 'english_list/update_word.html'
     form_class = forms.WordUpdateForm
 
     def save(self, *args, **kwargs):
-        obj = super(WordUpdateView, self).save()
+        obj = super().save()
         obj.save()
         return obj
 
-# def form_create_view(request):
-#     form = forms.UserForm(request.POST or None)
-#     if form.is_valid():
-#         form.save()
-#         form = forms.UserForm()#初期化
-#     return render(request,'english_list/form_create_view.html',{'form':form})
+    def get_success_url(self):
+        print(self.object)
+        # return reverse_lazy('english_list:edit_word',kwargs={'pk':self.object.id})
+        return reverse_lazy('english_list:index')
+
+class WordDeleteView(DeleteView):
+    model = WordLists
+    template_name = 'english_list/delete_word.html'
+    success_url = reverse_lazy('english_list:index')
+

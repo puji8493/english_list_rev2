@@ -9,7 +9,9 @@
 <body>
     <hi>プジさんの英文・英単語リスト</hi>
     <p>{{message|safe}} </p>
+    <a href="{% url 'english_list:form_create_view' %}">登録フォームへ</a><br>
     <br>
+
     <table>
         <tr>
             <th class="th_id">ID</th>
@@ -17,6 +19,8 @@
             <th class="th_ja_word">日本語</th>
             <th class="th_en_word">英語</th>
             <th class="th_memo">メモ</th>
+            <th class="th_edit">編集</th>
+            <th class="th_delete">削除</th>
         </tr>
         {% for item in wordlists %}
          <tr>
@@ -25,6 +29,8 @@
             <td class="td_ja_word">{{item.ja_word}}</td>
             <td class="td_en_word">{{item.en_word}}</td>
             <td class="td_memo">{{item.memo}}</td>
+            <td class="td_edit"><a href="{% url 'english_list:edit_word' item.id %}">編集</a></td>
+            <td class="td_delete"><a href="{% url 'english_list:delete_word' item.id %}">削除</a></td>
         </tr>
         {% endfor %}
     </table>

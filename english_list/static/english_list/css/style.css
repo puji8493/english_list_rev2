@@ -35,7 +35,7 @@ table{
     border: solid 1px;
 }
 .th_ja_word,.td_ja_word{
-    width:300px;
+    width:200px;
     border: solid 1px;
 }
 .th_en_word,.td_en_word{
@@ -43,6 +43,15 @@ table{
     border: solid 1px;
 }
 .th_memo,.td_memo{
-    width:300px;
+    width:200px;
+    border: solid 1px;
+}
+
+.th_edit,.td_edit{
+    width:60px;
+    border: solid 1px;
+}
+.th_delete,.td_delete{
+    width:60px;
     border: solid 1px;
 }
