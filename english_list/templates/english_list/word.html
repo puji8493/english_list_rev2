@@ -2,12 +2,13 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>詳細ページ</title>
 </head>
 <body>
-    {{ object.category }}<br>
-    {{ object.ja_word }}<br>
-    {{ object.en_word }}<br>
-    {{ object.memo }}<br>
+    <hi>ID：{{ object.id }}の詳細ページです</hi>
+    <p>カテゴリ－：{{ object.category }}</p>
+    <p>日本語：{{ object.ja_word }}</p>
+    <p>英語：{{ object.en_word }}</p>
+    <p>メモ：{{ object.memo }}</p>
 </body>
 </html>

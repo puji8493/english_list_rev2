@@ -5,13 +5,16 @@ from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.shortcuts import resolve_url
 
 
-# appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇●.html'
+# appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇〇.html'
 
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         data = WordLists.objects.all()
+        # データベースに保存した全てのデータを取得する　QuerySetオブジェクト
+        # データベース操作に関する機能をもっていることで、取得したデータの絞り込みや並び替え、遅延評価といった高度な機能ももつP85 滝沢さんテキスト
         return render(request, 'english_list/index.html', context={'wordlists': data})
 
 
@@ -32,25 +35,19 @@ class WordDetailView(DetailView):
     model = WordLists
     template_name = 'english_list/word.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     return context
 
-    #   objectは<WordLists:
-    #   {'object': <WordLists: <WordLists ☆ id=9,例外　除外,exception,名詞>>, 'wordlists': <WordLists: <WordLists ☆ id=9,例外　除外,exception,名詞>>, 'view': <english_list.views.WordDetailView object at 0x00000217F48AD840>}
 
 class WordUpdateView(UpdateView):
     model = WordLists
     template_name = 'english_list/update_word.html'
     form_class = forms.WordUpdateForm
 
-    def save(self, *args, **kwargs):
-        obj = super().save()
-        obj.save()
-        return obj
-
     def get_success_url(self):
         print(self.object)
+        # return resolve_url('english_list:index')
         # return reverse_lazy('english_list:edit_word',kwargs={'pk':self.object.id})
         return reverse_lazy('english_list:index')
 
@@ -58,4 +55,3 @@ class WordDeleteView(DeleteView):
     model = WordLists
     template_name = 'english_list/delete_word.html'
     success_url = reverse_lazy('english_list:index')
-
