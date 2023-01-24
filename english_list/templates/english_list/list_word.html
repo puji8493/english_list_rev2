@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Serch_My_english_lists</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>
+</head>
+<body>
+    <hi>プジさんの英文・英単語リスト</hi>
+    <p>{{message|safe}} </p>
+    <a href="{% url 'english_list:form_create_view' %}">登録フォームへ</a><br>
+    <br>
+
+<form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
+    <input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+</form>
+    <br>
+
+    <table>
+        <tr>
+            <th class="th_id">ID</th>
+            <th class="th_category">カテゴリー</th>
+            <th class="th_ja_word">日本語</th>
+            <th class="th_en_word">英語</th>
+            <th class="th_memo">メモ</th>
+            <th class="th_edit">編集</th>
+            <th class="th_delete">削除</th>
+        </tr>
+
+        {% for object in object_list %}
+         <tr>
+            <td class="td_id">{{object.id}}</td>
+            <td class="td_category">{{object.category}}</td>
+            <td class="td_ja_word">{{object.ja_word}}</td>
+            <td class="td_en_word">{{object.en_word}}</td>
+            <td class="td_memo">{{object.memo}}</td>
+            <td class="td_edit"><a href="{% url 'english_list:edit_word' object.id %}">編集</a></td>
+            <td class="td_delete"><a href="{% url 'english_list:delete_word' object.id %}">削除</a></td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    <br>
+
+
+</body>
+</html>
