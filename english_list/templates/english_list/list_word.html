@@ -13,7 +13,7 @@
     <br>
 
 <form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
-    <input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search">
+    <input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{keyword}}">
     <button class="btn btn-outline-primary" type="submit">Search</button>
 </form>
     <br>
