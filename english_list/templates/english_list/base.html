@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+　　<!　block endblockの間は継承先が記載する　☆☆といれた文字を継承先でblock.superを用いて後ろに表示してみた -->
+    <title>{% block title %}☆☆{% endblock %}</title>
+
+<!　CSSの書き方　セレクタ{プロパティ値:値;} -->
+<style type="text/css">
+    body{
+        width: 80%;
+        margin: 0 auto;
+    }
+    h1{
+        font-weight: 400;
+        text-align: center;
+        color: #0000ff;
+        background-color: #00ffff;
+    }
+    p{
+        font-size: 20px;
+        color: deeppink;
+    }
+    a{
+        font-size: 20px;
+        color: darkblue;
+    }
+
+</style>
+
+</head>
+<body>
+　　<!　以下ヘッダーの文字列は継承先でも表示される -->
+    <h1>プジさんの英文・単語リストアプリ</h1>
+
+    <!　block endblockの部分は継承先が記載する -->
+    {% block content %}{% endblock %}
+</body>
+</html>
