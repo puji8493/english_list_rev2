@@ -15,8 +15,8 @@ class WordListView(ListView):
     model = WordLists
     template_name = 'english_list/list_word.html'
 
-    def get_queryset(self,**kwargs):
-        queryset = super().get_queryset(**kwargs)
+    def get_queryset(self):
+        queryset = super().get_queryset()
         query = self.request.GET
         print(type(queryset))
         # print(queryset,";",sep="◎")

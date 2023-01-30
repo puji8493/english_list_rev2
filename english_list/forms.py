@@ -2,7 +2,7 @@ from django import forms
 from .models import WordLists
 
 class UserForm(forms.ModelForm):
-    class Meta():
+    class Meta:
         model = WordLists
         fields = '__all__'
 
@@ -14,7 +14,7 @@ class UserForm(forms.ModelForm):
 
 # Updateするためのフォーム
 class WordUpdateForm(forms.ModelForm):
-    class Meta():
+    class Meta:
         model = WordLists
         fields = '__all__'
 

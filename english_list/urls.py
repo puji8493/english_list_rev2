@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
-from .views import IndexView,FormView, WordDetailView, WordUpdateView, WordDeleteView,WordListView
-
+from .views import IndexView, FormView, WordDetailView, WordUpdateView, WordDeleteView, WordListView
 
 app_name = 'english_list'
 urlpatterns = [
