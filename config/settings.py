@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'english_list'
+    'english_list',
+    'top'
 ]
 # アプリケーションフォルダにTemplatesを作る情報を追加
 
