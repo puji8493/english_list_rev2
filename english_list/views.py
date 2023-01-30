@@ -38,7 +38,7 @@ class IndexView(View):
     def get(self, request, *args, **kwargs):
         data = WordLists.objects.all()
         # データベースに保存した全てのデータを取得する　QuerySetオブジェクト
-        # データベース操作に関する機能をもっていることで、取得したデータの絞り込みや並び替え、遅延評価といった高度な機能ももつP85 滝沢さんテキスト
+        # データベース操作に関する機能をもっていることで、取得したデータの絞り込みや並び替え、遅延評価といった高度な機能も持つ P85 滝沢さんテキスト
         return render(request, 'english_list/index.html', context={'wordlists': data})
 
 

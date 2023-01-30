@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-　　<!　block endblockの間は継承先が記載する　☆☆といれた文字を継承先でblock.superを用いて後ろに表示してみた -->
+　　<!　block endblockの間の囲んだ部分を１つのブロックとして定義すると子テンプレートで継承先できる -->
+    <! ☆☆といれた文字を継承先でblock.superを用いて後ろに表示してみた -->
     <title>{% block title %}☆☆{% endblock %}</title>
 
 <!　CSSの書き方　セレクタ{プロパティ値:値;} -->
@@ -24,6 +25,7 @@
     a{
         font-size: 20px;
         color: darkblue;
+        line-height: 2em;
     }
 
 </style>

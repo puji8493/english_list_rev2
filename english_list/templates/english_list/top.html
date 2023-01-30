@@ -1,14 +1,12 @@
-<!　base.htmlを継承する -->
+<!　base.htmlを継承する子テンプレート -->
 {% extends "english_list/base.html" %}
 
 <!　block.superは親テンプレートのブロック内部の値を持った変数になります。そして、それを子テンプレートで使える -->
 {% block title %}トップページ{{block.super}}{% endblock %}
 
 {% block content %}
-    <title>Title</title>
     <p>現在の日時は{{ time }}です</p>
     <p>現在の英文・英単語リストの登録件数は{{ count }}件です</p>
     <a href="{% url 'english_list:list_word' %}">一覧リスト</a><br>
-    <br>
     <a href="{% url 'english_list:form_create_view' %}">新規登録</a>
 {% endblock %}

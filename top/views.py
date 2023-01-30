@@ -2,6 +2,7 @@ from django.views.generic.base import TemplateView
 from datetime import datetime
 from english_list.models import WordLists
 
+# トップページ
 class TopView(TemplateView):
     template_name = 'english_list/top.html'
 
