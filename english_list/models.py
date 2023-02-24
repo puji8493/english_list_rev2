@@ -16,6 +16,7 @@ class WordLists(models.Model):
     ja_word = models.CharField('日本語', max_length=300)
     en_word = models.TextField('英語')
     memo = models.TextField('メモ')
+    file = models.ImageField(upload_to='media/images/', blank=True)
 
     def __str__(self):
         return '<WordLists ☆ id=' + str(self.id) + ',' + self.ja_word + ',' + self.en_word + ',' + self.memo + '>'

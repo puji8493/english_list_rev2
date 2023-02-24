@@ -1,5 +1,5 @@
 body{
-    width: 1350px;
+    width: max-width;
     background-color: white;
 
 }
@@ -22,10 +22,10 @@ th {
     background-color: hotpink;
 }
 
-table{
-    border: solid 1px;
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
 }
-
 .th_id,.td_id {
     width: 50px;
     border: solid 1px;
@@ -39,7 +39,7 @@ table{
     border: solid 1px;
 }
 .th_en_word,.td_en_word{
-    width:300px;
+    width:200px;
     border: solid 1px;
 }
 .th_memo,.td_memo{
@@ -54,4 +54,14 @@ table{
 .th_delete,.td_delete{
     width:60px;
     border: solid 1px;
+}
+.th_detali,.td_detail{
+    width:60px;
+    border: solid 1px;
+}
+.th_image,
+.td_image {
+  border: 1px solid black;
+  padding: 5px; /* セル内に余白を設定する場合 */
+  text-align: center; /* セル内のテキストを中央寄せにする場合 */
 }

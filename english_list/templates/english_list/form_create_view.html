@@ -8,7 +8,8 @@
     <h1>登録フォーム</h1>
 
     <div class="container">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
+
             {{ form.as_p }}
             {% csrf_token %}
             <input type="submit" class="btn btn-primary" value="Submit">

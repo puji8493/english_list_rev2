@@ -10,5 +10,11 @@
     <p>日本語：{{ object.ja_word }}</p>
     <p>英語：{{ object.en_word }}</p>
     <p>メモ：{{ object.memo }}</p>
+    {% if object.file %}
+        <p><img width="200px" height="200px" src="{{ object.file.url }}"></p>
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
+
 </body>
 </html>
