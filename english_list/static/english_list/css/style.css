@@ -27,37 +27,42 @@ table {
     border: 1px solid black;
 }
 .th_id,.td_id {
-    width: 50px;
+    width:50px;
     border: solid 1px;
+    text-align: center;
 }
 .th_category,.td_category{
     width:100px;
     border: solid 1px;
+    text-align: center;
 }
 .th_ja_word,.td_ja_word{
-    width:200px;
+    width:250px;
     border: solid 1px;
 }
 .th_en_word,.td_en_word{
-    width:200px;
+    width:250px;
     border: solid 1px;
 }
 .th_memo,.td_memo{
-    width:180px;
+    width:250px;
     border: solid 1px;
 }
 
 .th_edit,.td_edit{
-    width:60px;
+    width:50px;
     border: solid 1px;
+    text-align: center;
 }
 .th_delete,.td_delete{
-    width:60px;
+    width:50px;
     border: solid 1px;
+    text-align: center;
 }
 .th_detali,.td_detail{
-    width:60px;
+    width:50px;
     border: solid 1px;
+    text-align: center;
 }
 .th_image,
 .td_image {

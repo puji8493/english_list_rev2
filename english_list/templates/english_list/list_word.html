@@ -5,18 +5,24 @@
     <meta charset="UTF-8">
     <title>Serch_My_english_lists</title>
     <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>
+    <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <hi>プジさんの英文・英単語リスト</hi>
     <p>{{message|safe}} </p>
-    <a href="{% url 'english_list:form_create_view' %}">登録フォームへ</a><br>
+    <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib"></i><br>
     <br>
 
-<form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
-    <input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{keyword}}">
-    <button class="btn btn-outline-primary" type="submit">Search</button>
+<form method="get" action="{% url 'english_list:list_word' %}" method="get">
+  <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{category}}">
+    <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile"></i> カテゴリ検索</button>
+   </p>
 </form>
-    <br>
+
+    <form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
+    <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{keyword}}">
+    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i> 単語検索</button></p>
+</form>
 
     <table>
         <tr>

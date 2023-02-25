@@ -36,6 +36,15 @@ class WordUpdateForm(BaseForm):
     """編集するためのフォーム　BaseFormを継承"""
     pass
 
+
+# class CategoryFilterForm(forms.Form):
+#     CATEGORY_CHOICES = [
+#         ('', 'カテゴリー'),
+#         ('IT', 'IT'),
+#         ('仕事', '仕事'),
+#         ]
+#     category = forms.ChoiceField(label='カテゴリー', choices=CATEGORY_CHOICES, required=False)
+
 #
 # class UserForm(forms.ModelForm):
 #     """新規登録するためのフォーム"""

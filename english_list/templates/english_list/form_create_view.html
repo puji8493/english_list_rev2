@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> <title>Forms</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> <title>Forms</title>
+    <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>登録フォーム</h1>
+    <h1>登録フォーム <i class="fa-solid fa-pen-nib"></i></h1>
 
     <div class="container">
         <form method="post" enctype="multipart/form-data">
@@ -19,6 +20,7 @@
                 {% endif %}
             {% endfor %}
             <input type="submit" class="btn btn-primary" value="Submit">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
         </form>
         <br>
     </div>

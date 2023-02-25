@@ -15,7 +15,8 @@
     {% else %}
         <p>No image available</p>
     {% endif %}
-    <p><a href="{% url 'english_list:edit_word' object.id %}">編集</a></p>
+    <p><a href="{% url 'english_list:edit_word' object.id %}">編集ページへ</a></p>
+    <a href="{% url 'english_list:list_word' %}">一覧ページへ</a>
 
 </body>
 </html>

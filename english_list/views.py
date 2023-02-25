@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.db.models import Q
 
+
 # appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇〇.html'
 
 class WordListView(ListView):
@@ -16,19 +17,28 @@ class WordListView(ListView):
     model = WordLists
     template_name = 'english_list/list_word.html'
 
+    # form_class = CategoryFilterForm
+
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET
-        print(type(queryset))
-        # :=は代入式
+
+        if category := query.get('category'):
+            queryset = queryset.filter(category=category)
+
         if keyword := query.get('keyword'):
             queryset = queryset.filter(
                 Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
             )
         return queryset.order_by('id')
+        #returnはカテゴリ、単語で重複しないとこ
 
     def get_context_data(self, **kwargs):
+        """テンプレートに渡すコンテキストデータを返すメソッド
+           context['category'] , context['keyword']でテキスボックスの値を表示できる"""
+
         context = super().get_context_data(**kwargs)
+        context['category'] = self.request.GET.get('category', '')
         context['keyword'] = self.request.GET.get('keyword', '')
         return context
 
@@ -81,6 +91,8 @@ class WordDeleteView(DeleteView):
 
 
 """WordListViewクラスに変更"""
+
+
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         data = WordLists.objects.all()
