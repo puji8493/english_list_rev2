@@ -9,9 +9,15 @@
 
     <div class="container">
         <form method="post" enctype="multipart/form-data">
-
-            {{ form.as_p }}
             {% csrf_token %}
+            {% for field in form %}
+                <br>
+                {{ field.label_tag }} {{ field }}
+                <br>
+                {% if field.errors %}
+                    <div style="color: red">{{ field.errors.as_text }}</div>
+                {% endif %}
+            {% endfor %}
             <input type="submit" class="btn btn-primary" value="Submit">
         </form>
         <br>

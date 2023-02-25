@@ -7,10 +7,6 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.db.models import Q
-from django.http import HttpResponseRedirect
-from .forms import UpdatePictureForm
-from django.shortcuts import resolve_url
-
 
 # appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇〇.html'
 
@@ -24,7 +20,6 @@ class WordListView(ListView):
         queryset = super().get_queryset()
         query = self.request.GET
         print(type(queryset))
-        # print(queryset,";",sep="◎")
         # :=は代入式
         if keyword := query.get('keyword'):
             queryset = queryset.filter(
@@ -56,22 +51,6 @@ class WordDetailView(DetailView):
 
     model = WordLists
     template_name = 'english_list/word.html'
-    form_class = forms.UserForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = UpdatePictureForm(instance=self.object)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = UpdatePictureForm(request.POST, request.FILES, instance=self.object)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(self.object.get_absolute_url())
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-# このコードでは、get_context_dataメソッドでフォームをcontextに渡し、postメソッドでフォームのデータを受け取って保存します。また、get_context_dataメソッドでフォームに現在のWordListsオブジェクトを渡して、フォームに初期値を設定します。
 
 
 class WordUpdateView(UpdateView):
@@ -94,14 +73,14 @@ class WordUpdateView(UpdateView):
 
 
 class WordDeleteView(DeleteView):
+    """削除するためのView"""
+
     model = WordLists
     template_name = 'english_list/delete_word.html'
     success_url = reverse_lazy('english_list:list_word')
 
 
 """WordListViewクラスに変更"""
-
-
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         data = WordLists.objects.all()

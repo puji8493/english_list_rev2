@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,8 +9,17 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    {% if form.file.errors %}
+        <div style="color: red">{{ form.file.errors.as_text }}</div>
+    {% endif %}
     {{ form.as_p }}
     <input type="submit" value="更新">
 </form>
+    {% if object.file %}
+        <p><img width="200px" height="200px" src="{{ object.file.url }}"></p>
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
+    <a href="{% url 'english_list:list_word' %}">一覧</a>
 </body>
 </html>
