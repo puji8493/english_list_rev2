@@ -10,18 +10,19 @@
 <body>
     <hi>プジさんの英文・英単語リスト</hi>
     <p>{{message|safe}} </p>
-    <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib"></i><br>
+    <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
     <br>
+
 
 <form method="get" action="{% url 'english_list:list_word' %}" method="get">
   <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{category}}">
-    <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile"></i> カテゴリ検索</button>
+    <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile" style="color: deeppink"></i> カテゴリ検索</button>
    </p>
 </form>
 
     <form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
     <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{keyword}}">
-    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i> 単語検索</button></p>
+    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i> 単語検索</button></p>
 </form>
 
     <table>

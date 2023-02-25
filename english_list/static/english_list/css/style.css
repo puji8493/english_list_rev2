@@ -70,3 +70,9 @@ table {
   padding: 5px; /* セル内に余白を設定する場合 */
   text-align: center; /* セル内のテキストを中央寄せにする場合 */
 }
+
+
+/*<i class="fa-solid fa-pen-nib fa-1x"></i>*/
+.icon_green {
+    color: hotpink;
+  }
