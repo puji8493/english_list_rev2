@@ -1,0 +1,10 @@
+<!　base.htmlを継承する子テンプレート -->
+{% extends "english_list/base.html" %}
+
+<!　block.superは親テンプレートのブロック内部の値を持った変数になります。そして、それを子テンプレートで使える -->
+{% block title %}トップページ{{block.super}}{% endblock %}
+
+{% block content %}
+<h2>アクセス権限がありません。</h2>
+<a href="{% url 'english_list:login' %}">ログインページへ</a>
+{% endblock %}
