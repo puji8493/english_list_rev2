@@ -11,15 +11,12 @@
     <p>{{message|safe}} </p>
     <P>{% if user.is_authenticated %}
         <hi>{{ user.get_username }}さんの英文・英単語リスト</hi>
-        <h2>こんにちは☆{{ user.get_username }}さん</h2><br>
-        <a href="{% url 'english_list:logout' %}"> ログアウト </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+        <h2>こんにちは☆{{ user.get_username }}さん  <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br></h2>
        {% else %}
         <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>
         <a href="{% url 'english_list:login' %}"> ログイン </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-       {% endif %}
         <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-    <br>
-
+       {% endif %}
 <form method="get" action="{% url 'english_list:list_word' %}" method="get">
   <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{category}}">
     <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile" style="color: deeppink"></i> カテゴリ検索</button>

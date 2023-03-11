@@ -16,7 +16,7 @@ hi{
 h2{
     font-size: 1.5em;
     font-weight: bold;
-    height: 10px;
+    height: 20px;
     padding-left: 10px;
     color: deepskyblue;
 }
@@ -24,7 +24,7 @@ h3{
     font-size: 1.5em;
     font-weight: bold;
     color: hotpink;
-    height: 10px;
+    height: 20px;
     padding-left: 10px;
     color: deepskyblue;
 }
