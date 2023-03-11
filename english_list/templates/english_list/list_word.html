@@ -31,6 +31,25 @@
     <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i> 単語検索</button></p>
 </form>
 
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+
     <table>
         <tr>
             <th class="th_id">ID</th>
@@ -64,10 +83,7 @@
 
         </tr>
         {% endfor %}
-
     </table>
     <br>
-
-
 </body>
 </html>

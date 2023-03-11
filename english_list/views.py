@@ -12,6 +12,7 @@ from django.contrib.auth import login
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
+from django.core.paginator import Paginator
 
 class CheckMyPostMixin(UserPassesTestMixin):
 
@@ -23,9 +24,10 @@ class CheckMyPostMixin(UserPassesTestMixin):
 
 class WordListView(ListView):
     """一覧表示"""
-
     model = WordLists
     template_name = 'english_list/list_word.html'
+    paginate_by = 10
+
 
     def get_queryset(self):
         queryset = super().get_queryset()
