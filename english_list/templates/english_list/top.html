@@ -9,7 +9,7 @@
     <p>現在の英文・英単語リストの登録件数は{{ count }}件です</p>
 
     <p>{% if user.is_authenticated %}
-        ログイン名☆{{ user.get_username }}さん<br>
+        <h3>ログイン名☆{{ user.get_username }}さん</h3><br>
         <a href="{% url 'english_list:logout' %}">ログアウト</a>
         {% else %}
         <a href="{% url 'english_list:login' %}">ログイン</a><br>

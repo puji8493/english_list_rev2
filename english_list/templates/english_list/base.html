@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 　　<!　block endblockの間の囲んだ部分を１つのブロックとして定義すると子テンプレートで継承先できる -->
     <! ☆☆といれた文字を継承先でblock.superを用いて後ろに表示してみた -->
     <title>{% block title %}☆☆{% endblock %}</title>
@@ -18,6 +18,11 @@
         color: #0000ff;
         background-color: #00ffff;
     }
+    h3{
+        font-weight: 400;
+        color: green;
+    }
+
     p{
         font-size: 20px;
         color: deeppink;
