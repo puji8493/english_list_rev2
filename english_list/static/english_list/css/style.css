@@ -13,7 +13,13 @@ hi{
     color: blueviolet;
     margin-bottom: 30px;
 }
-
+h2{
+    font-size: 1.5em;
+    font-weight: bold;
+    height: 10px;
+    padding-left: 10px;
+    color: deepskyblue;
+}
 p{
     font-size: 14px;
 }

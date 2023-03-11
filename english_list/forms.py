@@ -1,5 +1,7 @@
 from django import forms
 from .models import WordLists
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from accounts.models import CustomUser
 
 class BaseForm(forms.ModelForm):
     en_word = forms.CharField(label='英語', widget=forms.Textarea(attrs={'rows': 5, 'cols': 50}))
@@ -7,7 +9,8 @@ class BaseForm(forms.ModelForm):
 
     class Meta:
         model = WordLists
-        fields = '__all__'
+        exclude = ['user']
+        # fields = ['category','ja_word','en_word','memo','file',]
 
     def save(self, *args, **kwargs):
         obj = super().save(commit=False)
@@ -35,6 +38,19 @@ class UserForm(BaseForm):
 class WordUpdateForm(BaseForm):
     """編集するためのフォーム　BaseFormを継承"""
     pass
+
+class LoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+class SignUpForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'password1', 'password2')
+
+
 
 
 # class CategoryFilterForm(forms.Form):

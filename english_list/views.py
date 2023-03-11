@@ -7,7 +7,11 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.db.models import Q
-
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import login
+from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 
 # appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇〇.html'
 
@@ -43,16 +47,24 @@ class WordListView(ListView):
         return context
 
 
-class CreateWordView(CreateView):
+class CreateWordView(LoginRequiredMixin,CreateView):
     """新規登録"""
 
     model = WordLists
     template_name = 'english_list/form_create_view.html'
     form_class = forms.UserForm
-    success_url = reverse_lazy('english_list:list_word')
+    success_url = reverse_lazy('english_list:form_create_view')
 
     def form_valid(self, form):
-        form.save()
+        """
+        フォームのバリデーション
+        ファイル名はフォームにいれた文字をfile_name 属性に格納する
+        :param form:　upload.htmlのテンプレートフォーム
+            　　 instance:データベースへ保存する前のモデルインスタンス
+        :return:指定されたURLにリダイレクト
+        """
+        form.instance.user_id = self.request.user.id
+        messages.success(self.request, "新規登録しました")
         return super().form_valid(form)
 
 
@@ -101,7 +113,7 @@ class IndexView(View):
         return render(request, 'english_list/index.html', context={'wordlists': data})
 
 
-class FormView(View):
+class FormView(LoginRequiredMixin,View):
     """新規登録"""
 
     def get(self, request, *args, **kwargs):
@@ -111,6 +123,37 @@ class FormView(View):
     def post(self, request, *args, **kwargs):
         form = forms.UserForm(request.POST or None)
         if form.is_valid():
+            form = form.save(commit=False)
+            form.user_id = self.request.user.id
             form.save()
             form = forms.UserForm()
+
         return render(request, 'english_list/form_create_view.html', {'form': form})
+
+
+class Login(LoginView):
+    form_class = forms.LoginForm
+    template_name = 'english_list/login.html'
+
+
+class Logout(LogoutView):
+    template_name = 'english_list/logout.html'
+
+
+class SignUpView(CreateView):
+
+    form_class = forms.SignUpForm
+    template_name = 'english_list/signup.html'
+    success_url = reverse_lazy('english_list:signup')
+
+    def form_valid(self, form):
+        """ユーザー登録"""
+        user = form.save()
+        login(self.request, user)
+        self.object = user
+        messages.success(self.request, 'ユーザー登録が完了しました。')
+        return HttpResponseRedirect(self.get_success_url())
+
+        # valid = super().form_valid(form)
+        # login(self.request, self.object)
+        # return valid

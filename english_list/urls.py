@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
-from .views import IndexView, FormView, WordDetailView, WordUpdateView, WordDeleteView, WordListView,CreateWordView
+from .views import (IndexView, FormView, WordDetailView, WordUpdateView, WordDeleteView,
+                    WordListView,CreateWordView,Login,Logout,SignUpView,)
+
 
 app_name = 'english_list'
 urlpatterns = [
@@ -9,6 +11,9 @@ urlpatterns = [
     path('detail_word/<int:pk>/', WordDetailView.as_view(), name='detail_word'),
     path('edit_word/<int:pk>/', WordUpdateView.as_view(), name='edit_word'),
     path('delete_word/<int:pk>/', WordDeleteView.as_view(), name='delete_word'),
-    path('test', IndexView.as_view(), name='index'),
+    path('test/', IndexView.as_view(), name='index'),
+    path('login/', Login.as_view(), name='login'),
+    path('logout/', Logout.as_view(), name='logout'),
+    path('signup/', SignUpView.as_view(), name='signup'),
 
 ]
