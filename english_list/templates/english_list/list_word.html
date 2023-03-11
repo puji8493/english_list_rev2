@@ -14,7 +14,7 @@
         <h2>こんにちは☆{{ user.get_username }}さん</h2><br>
         <a href="{% url 'english_list:logout' %}"> ログアウト </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
        {% else %}
-        <hi>英文・英単語リスト</hi><br>
+        <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>
         <a href="{% url 'english_list:login' %}"> ログイン </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
        {% endif %}
         <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
@@ -42,6 +42,7 @@
             <th class="th_delete">削除</th>
             <th class="th_detail">詳細</th>
             <th class="th_image">画像</th>
+            <th class="th_user">投稿者</th>
         </tr>
 
         {% for object in object_list %}
@@ -59,6 +60,8 @@
             {% else %}
                 <td class="td_image">No image</td>
             {% endif %}
+             <td class="td_user">{{object.user.username}}</td>
+
         </tr>
         {% endfor %}
 

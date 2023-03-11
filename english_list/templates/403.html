@@ -6,5 +6,6 @@
 
 {% block content %}
 <h2>アクセス権限がありません。</h2>
-<a href="{% url 'english_list:login' %}">ログインページへ</a>
+<a href="{% url 'english_list:login' %}">ログインページへ</a><br>
+<a href="{% url 'english_list:list_word' %}">一覧リストヘ</a>
 {% endblock %}

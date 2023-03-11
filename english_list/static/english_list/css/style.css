@@ -20,6 +20,14 @@ h2{
     padding-left: 10px;
     color: deepskyblue;
 }
+h3{
+    font-size: 1.5em;
+    font-weight: bold;
+    color: hotpink;
+    height: 10px;
+    padding-left: 10px;
+    color: deepskyblue;
+}
 p{
     font-size: 14px;
 }
@@ -76,7 +84,11 @@ table {
   padding: 5px; /* セル内に余白を設定する場合 */
   text-align: center; /* セル内のテキストを中央寄せにする場合 */
 }
-
+.th_user,.td_user{
+    width:50px;
+    border: solid 1px;
+    text-align: center;
+}
 
 /*<i class="fa-solid fa-pen-nib fa-1x"></i>*/
 .icon_green {

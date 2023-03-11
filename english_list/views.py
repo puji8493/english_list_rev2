@@ -13,15 +13,19 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 
-# appフォルダ/templats/english_listにしたので、パスの指定は'english_list/〇〇.html'
+class CheckMyPostMixin(UserPassesTestMixin):
+
+    raise_exception = True
+
+    def test_func(self):
+        post = WordLists.objects.get(id=self.kwargs["pk"])
+        return post.user == self.request.user
 
 class WordListView(ListView):
     """一覧表示"""
 
     model = WordLists
     template_name = 'english_list/list_word.html'
-
-    # form_class = CategoryFilterForm
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -75,7 +79,7 @@ class WordDetailView(DetailView):
     template_name = 'english_list/word.html'
 
 
-class WordUpdateView(UpdateView):
+class WordUpdateView(CheckMyPostMixin,UpdateView):
     """編集のビュー"""
 
     model = WordLists
@@ -94,7 +98,7 @@ class WordUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class WordDeleteView(DeleteView):
+class WordDeleteView(CheckMyPostMixin,DeleteView):
     """削除するためのView"""
 
     model = WordLists
