@@ -12,6 +12,7 @@
         <h3>ログイン名☆{{ user.get_username }}さん</h3><br>
         <a href="{% url 'english_list:logout' %}">ログアウト</a>
         {% else %}
+        <h3>ようこそ　ゲストさん <br>ログインかサインアップしてください</h3><br>
         <a href="{% url 'english_list:login' %}">ログイン</a><br>
         <a href="{% url 'english_list:signup' %}">Signup:</a><br>
    {% endif %} </p>
