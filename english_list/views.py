@@ -171,7 +171,3 @@ class SignUpView(CreateView):
         self.object = user
         messages.success(self.request, 'ユーザー登録が完了しました。')
         return HttpResponseRedirect(self.get_success_url())
-
-        # valid = super().form_valid(form)
-        # login(self.request, self.object)
-        # return valid
