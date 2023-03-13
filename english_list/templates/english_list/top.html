@@ -16,6 +16,7 @@
         <a href="{% url 'english_list:login' %}">ログイン</a><br>
         <a href="{% url 'english_list:signup' %}">Signup:</a><br>
    {% endif %} </p>
-    <a href="{{ object.get_absolute.url }}">一覧リスト</a><br>
+    <a href="{% url 'english_list:list_word' %}">一覧リスト</a><br>
+{#    <a href="{{ object.get_absolute.url }}">一覧リスト</a><br>#}
     <a href="{% url 'english_list:form_create_view' %}">新規登録</a>
 {% endblock %}
