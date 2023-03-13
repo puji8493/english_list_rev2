@@ -19,6 +19,6 @@
     {% else %}
         <p>No image available</p>
     {% endif %}
-    <a href="{% url 'english_list:list_word' %}">一覧</a>
+    <a href="{{ object.get_absolute_url }}">一覧☆</a>
 </body>
 </html>

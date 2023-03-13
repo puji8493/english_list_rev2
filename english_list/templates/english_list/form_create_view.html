@@ -14,7 +14,6 @@
             {{ message }}
         {% endfor %}
     {% endif %}</h3>
-    <a href="{% url 'english_list:list_word' %}">一覧リストへ</a><br>
     <div class="container">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -31,5 +30,7 @@
         </form>
         <br>
     </div>
+    <h3><a href="{% url 'english_list:list_word' %}">一覧リストへ</a></h3>
+
 </body>
 </html>
