@@ -90,6 +90,8 @@ class WordDetailView(DetailView):
     model = WordLists
     template_name = 'english_list/word.html'
 
+    def get_queryset(self):
+        return WordLists.objects.select_related('user')
 
 class WordUpdateView(MyDispatchMixin, UpdateView):
     """編集のビュー"""
