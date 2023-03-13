@@ -15,14 +15,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 
 
-class CheckMyPostMixin(UserPassesTestMixin):
-    raise_exception = True
-
-    def test_func(self):
-        post = WordLists.objects.get(id=self.kwargs["pk"])
-        return post.user == self.request.user
-
-
 class MyDispatchMixin:
 
     def dispatch(self, request, *args, **kwargs):
@@ -31,6 +23,14 @@ class MyDispatchMixin:
             messages.error(request, '他のユーザーの投稿は編集できません')
             return HttpResponseRedirect(reverse_lazy('english_list:login'))
         return super().dispatch(request, *args, **kwargs)
+
+
+class CheckMyPostMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        post = WordLists.objects.get(id=self.kwargs["pk"])
+        return post.user == self.request.user
 
 
 class WordListView(ListView):
@@ -91,7 +91,6 @@ class WordDetailView(DetailView):
     template_name = 'english_list/word.html'
 
 
-# class WordUpdateView(CheckMyPostMixin,UpdateView):
 class WordUpdateView(MyDispatchMixin, UpdateView):
     """編集のビュー"""
 
