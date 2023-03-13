@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render
 from .models import WordLists
 from . import forms
 from django.views.generic.base import View
@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
