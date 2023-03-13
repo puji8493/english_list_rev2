@@ -12,6 +12,7 @@
     <P>{% if user.is_authenticated %}
         <hi>{{ user.get_username }}さんの英文・英単語リスト</hi>
         <h2>こんにちは☆{{ user.get_username }}さん  <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br></h2>
+        <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
        {% else %}
         <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>
         <a href="{% url 'english_list:login' %}"> ログイン </a><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>

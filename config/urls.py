@@ -6,6 +6,7 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
     path('', include('top.urls'), name="top"),
     path('english_list/',include('english_list.urls'),name="english_list"),
  ]

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import WordLists
 from . import forms
 from django.views.generic.base import View
@@ -9,25 +9,35 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 
-class CheckMyPostMixin(UserPassesTestMixin):
 
+class CheckMyPostMixin(UserPassesTestMixin):
     raise_exception = True
 
     def test_func(self):
         post = WordLists.objects.get(id=self.kwargs["pk"])
         return post.user == self.request.user
 
+
+class MyDispatchMixin:
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.user != self.request.user:
+            messages.error(request, '他のユーザーの投稿は編集できません')
+            return HttpResponseRedirect(reverse_lazy('english_list:login'))
+        return super().dispatch(request, *args, **kwargs)
+
+
 class WordListView(ListView):
     """一覧表示"""
     model = WordLists
     template_name = 'english_list/list_word.html'
     paginate_by = 10
-
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -41,7 +51,7 @@ class WordListView(ListView):
                 Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
             )
         return queryset.order_by('id')
-        #returnはカテゴリ、単語で重複しないとこ
+        # returnはカテゴリ、単語で重複しないとこ
 
     def get_context_data(self, **kwargs):
         """テンプレートに渡すコンテキストデータを返すメソッド
@@ -53,7 +63,7 @@ class WordListView(ListView):
         return context
 
 
-class CreateWordView(LoginRequiredMixin,CreateView):
+class CreateWordView(LoginRequiredMixin, CreateView):
     """新規登録"""
 
     model = WordLists
@@ -81,12 +91,16 @@ class WordDetailView(DetailView):
     template_name = 'english_list/word.html'
 
 
-class WordUpdateView(CheckMyPostMixin,UpdateView):
+# class WordUpdateView(CheckMyPostMixin,UpdateView):
+class WordUpdateView(MyDispatchMixin, UpdateView):
     """編集のビュー"""
 
     model = WordLists
     template_name = 'english_list/update_word.html'
     form_class = forms.WordUpdateForm
+
+    def get_queryset(self):
+        return WordLists.objects.select_related('user')
 
     def get_success_url(self):
         print(self.object)
@@ -100,15 +114,15 @@ class WordUpdateView(CheckMyPostMixin,UpdateView):
         return super().form_valid(form)
 
 
-class WordDeleteView(CheckMyPostMixin,DeleteView):
+class WordDeleteView(MyDispatchMixin, DeleteView):
     """削除するためのView"""
 
     model = WordLists
     template_name = 'english_list/delete_word.html'
     success_url = reverse_lazy('english_list:list_word')
 
-
-"""WordListViewクラスに変更"""
+    def get_queryset(self):
+        return WordLists.objects.select_related('user')
 
 
 class IndexView(View):
@@ -119,7 +133,7 @@ class IndexView(View):
         return render(request, 'english_list/index.html', context={'wordlists': data})
 
 
-class FormView(LoginRequiredMixin,View):
+class FormView(LoginRequiredMixin, View):
     """新規登録"""
 
     def get(self, request, *args, **kwargs):
@@ -147,7 +161,6 @@ class Logout(LogoutView):
 
 
 class SignUpView(CreateView):
-
     form_class = forms.SignUpForm
     template_name = 'english_list/signup.html'
     success_url = reverse_lazy('english_list:signup')

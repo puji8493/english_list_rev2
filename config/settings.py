@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig', # 追加
+    'debug_toolbar',  # 追加
     'english_list.apps.EnglishListConfig',
     'top.apps.TopConfig',
     'accounts.apps.AccountsConfig',# 追加
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # 追加
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -137,3 +139,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ログイン設定
 LOGIN_URL = 'english_list:login'
 LOGIN_REDIRECT_URL = 'english_list:list_word'
+
+# 追加
+INTERNAL_IPS = ['127.0.0.1']
