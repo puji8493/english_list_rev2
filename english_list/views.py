@@ -26,6 +26,7 @@ class MyDispatchMixin:
 
 
 class CheckMyPostMixin(UserPassesTestMixin):
+
     raise_exception = True
 
     def test_func(self):
@@ -41,25 +42,35 @@ class WordListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.select_related('user')
         query = self.request.GET
+        category = query.get('category')
+        keyword = query.get('keyword')
 
-        if category := query.get('category'):
-            queryset = queryset.filter(category=category)
+        if category or keyword:
+            filters = Q()
+            if category:
+                filters &= Q(category=category)
+            if keyword:
+                filters &= Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
+            queryset = queryset.filter(filters)
 
-        if keyword := query.get('keyword'):
-            queryset = queryset.filter(
-                Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
-            )
         return queryset.order_by('id')
-        # returnはカテゴリ、単語で重複しないとこ
+
+    """
+    しかし、ここでの&=は、DjangoのQオブジェクトを使ったクエリビルダーで、ビット演算子の代わりに論理演算子（AND）を表します。
+    &=を使うことで、複数の検索条件を持つフィルターを作成できます。左辺のfiltersオブジェクトに、右辺の検索条件が追加され、その結果がfiltersに代入されます。&=を使わない場合、別々のQオブジェクトを作成して、|演算子で結合する必要があります。
+    上記のコードでは、categoryの値が存在する場合、categoryでフィルタリングされたクエリセットを返します。keywordの値が存在する場合は、ja_word、en_word、memoのいずれかがkeywordを含むものでフィルタリングされたクエリセット
+    """
 
     def get_context_data(self, **kwargs):
         """テンプレートに渡すコンテキストデータを返すメソッド
            context['category'] , context['keyword']でテキスボックスの値を表示できる"""
 
         context = super().get_context_data(**kwargs)
-        context['category'] = self.request.GET.get('category', '')
-        context['keyword'] = self.request.GET.get('keyword', '')
+        query = self.request.GET
+        context['category'] = query.get('category', '')
+        context['keyword'] = query.get('keyword', '')
         return context
 
 
