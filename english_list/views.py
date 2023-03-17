@@ -26,7 +26,6 @@ class MyDispatchMixin:
 
 
 class CheckMyPostMixin(UserPassesTestMixin):
-
     raise_exception = True
 
     def test_func(self):
@@ -46,6 +45,10 @@ class WordListView(ListView):
         query = self.request.GET
         category = query.get('category')
         keyword = query.get('keyword')
+        my_list = self.request.session.get('my_list') == 'on'
+
+        if my_list and self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user)
 
         if category or keyword:
             filters = Q()
@@ -57,11 +60,11 @@ class WordListView(ListView):
 
         return queryset.order_by('id')
 
-    """
-    しかし、ここでの&=は、DjangoのQオブジェクトを使ったクエリビルダーで、ビット演算子の代わりに論理演算子（AND）を表します。
-    &=を使うことで、複数の検索条件を持つフィルターを作成できます。左辺のfiltersオブジェクトに、右辺の検索条件が追加され、その結果がfiltersに代入されます。&=を使わない場合、別々のQオブジェクトを作成して、|演算子で結合する必要があります。
-    上記のコードでは、categoryの値が存在する場合、categoryでフィルタリングされたクエリセットを返します。keywordの値が存在する場合は、ja_word、en_word、memoのいずれかがkeywordを含むものでフィルタリングされたクエリセット
-    """
+        """
+        ここでの&=は、DjangoのQオブジェクトを使ったクエリビルダーで、ビット演算子の代わりに論理演算子（AND）を表します。
+        &=を使うことで、複数の検索条件を持つフィルターを作成できます。左辺のfiltersオブジェクトに、右辺の検索条件が追加され、その結果がfiltersに代入されます。&=を使わない場合、別々のQオブジェクトを作成して、|演算子で結合する必要があります。
+        上記のコードでは、categoryの値が存在する場合、categoryでフィルタリングされたクエリセットを返します。keywordの値が存在する場合は、ja_word、en_word、memoのいずれかがkeywordを含むものでフィルタリングされたクエリセット
+        """
 
     def get_context_data(self, **kwargs):
         """テンプレートに渡すコンテキストデータを返すメソッド
@@ -71,7 +74,19 @@ class WordListView(ListView):
         query = self.request.GET
         context['category'] = query.get('category', '')
         context['keyword'] = query.get('keyword', '')
+        context['my_list'] = self.request.session.get('my_list') == 'on'
+
         return context
+
+    def post(self, request, *args, **kwargs):
+        """検索ボタンを押した時の処理"""
+
+        my_list = request.POST.get('my_list')
+        if my_list:
+            request.session['my_list'] = my_list
+        else:
+            request.session.pop('my_list', None)
+        return super().get(request, *args, **kwargs)
 
 
 class CreateWordView(LoginRequiredMixin, CreateView):
@@ -103,6 +118,7 @@ class WordDetailView(DetailView):
 
     def get_queryset(self):
         return WordLists.objects.select_related('user')
+
 
 class WordUpdateView(MyDispatchMixin, UpdateView):
     """編集のビュー"""
