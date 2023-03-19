@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from .models import WordLists
 from . import forms
 from django.views.generic.base import View
@@ -13,6 +13,8 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
+
+import csv
 
 
 class MyDispatchMixin:
@@ -83,13 +85,14 @@ class WordListView(ListView):
         return context
 
     def post(self, request, *args, **kwargs):
-        """チェックボタンを切り替えるための処理"""
+        """チェックボックスの状態をsession属性に保存"""
 
         my_list = request.POST.get('my_list')
         if my_list:
             request.session['my_list'] = my_list
         else:
             request.session.pop('my_list', None)
+
         return super().get(request, *args, **kwargs)
 
 
@@ -181,6 +184,37 @@ class FormView(LoginRequiredMixin, View):
             form = forms.UserForm()
 
         return render(request, 'english_list/form_create_view.html', {'form': form})
+
+
+class GenerateCsvView(LoginRequiredMixin, WordListView):
+    """リストをCSVファイルにダウンロードする
+        チェックボックスONの場合はログインユーザーの単語リストをダウンロードする
+        チェックボックスOFFの場合はログインユーザーの単語リストをダウンロードする
+        ユーザーログインしていない場合は、ログイン画面へ遷移する
+    """
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+        my_list = self.request.session.get('my_list') == 'on'
+
+        if my_list and self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user)
+
+        return queryset
+
+    def post(self, request):
+
+        response = HttpResponse(content_type='text/csv', charset='utf-8-sig')
+        response['Content-Disposition'] = 'attachment; filename="wordlist.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['id', 'カテゴリ', '英単語', '日本語訳', 'メモ', 'ユーザー名'])
+
+        queryset = self.get_queryset()
+        for obj in queryset:
+            writer.writerow([obj.id, obj.category, obj.en_word, obj.ja_word, obj.memo, obj.user.username])
+
+        return response
 
 
 class Login(LoginView):

@@ -51,7 +51,16 @@ class SignUpForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2')
 
 
+class zCSVUploadForm(forms.Form):
+    """CSVファイルをアップロードするためのフォーム"""
+    file = forms.FileField(label='CSVファイル')
 
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        if file:
+            if file.size > 500 * 1024:
+                raise forms.ValidationError('ファイルサイズは500KB以下にしてください。')
+        return file
 
 # class CategoryFilterForm(forms.Form):
 #     CATEGORY_CHOICES = [

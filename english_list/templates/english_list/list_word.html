@@ -35,6 +35,10 @@
     <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search" aria-label="Search" value="{{keyword}}">
     <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i> 単語検索</button></p>
 </form>
+<form method="post" action="{% url 'english_list:export' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">CSVダウンロード</button>
+</form>
 
 <div class="pagination">
     <span class="step-links">
