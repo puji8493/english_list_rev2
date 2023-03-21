@@ -76,6 +76,8 @@ class WordListForm(forms.ModelForm):
             instance.save()
         return instance
 
+
+
 # class CSVUploadForm(forms.Form):
 #     """CSVファイルをアップロードするためのフォーム"""
 #     file = forms.FileField(label='CSVファイル')

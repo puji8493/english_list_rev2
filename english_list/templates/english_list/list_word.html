@@ -31,7 +31,8 @@
     <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示
     </p>
 </form>
-<a href="{% url 'english_list:select_users' %}"> ユーザー選択 </a>
+<a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
+<a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
 <form method="get" action="{% url 'english_list:list_word' %}" method="get">
     <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search"
@@ -54,6 +55,7 @@
     <button type="submit" class="btn btn-primary">CSVダウンロード</button>
 </form>
 
+
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -70,6 +72,40 @@
         {% endif %}
     </span>
 </div>
+{% if wordlists.has_other_pages %}
+    <div class="pagination">
+        {% if wordlists.has_previous %}
+            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>
+        {% endif %}
+        {% for num in wordlists.paginator.page_range %}
+            {% if wordlists.number == num %}
+                <span class="current-page">{{ num }}</span>
+            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}
+                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if wordlists.has_next %}
+            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+{#<div class="pagination">#}
+{#    <span class="step-links">#}
+{#        {% if page_obj.has_previous %}#}
+{#            <a href="?page=1">&laquo; first</a>#}
+{#            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
+{#        {% endif %}#}
+{#        <span class="current">#}
+{#            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
+{#        </span>#}
+{##}
+{#        {% if page_obj.has_next %}#}
+{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
+{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
+{#        {% endif %}#}
+{#    </span>#}
+{#</div>#}
 <table>
     <tr>
         <th class="th_id">ID</th>

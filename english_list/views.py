@@ -185,8 +185,8 @@ class FormView(LoginRequiredMixin, View):
 
         return render(request, 'english_list/form_create_view.html', {'form': form})
 
-
 class CheckUserListView(ListView):
+
     model = WordLists
     template_name = 'english_list/list_users.html'
     context_object_name = 'wordlists'
@@ -194,31 +194,37 @@ class CheckUserListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        user_ids = self.request.POST.getlist('users')
-        if user_ids:
-            queryset = queryset.filter(user__in=user_ids)
+        user_ids = self.request.GET.getlist('users')
+        queryset = WordLists.objects.filter(user__in=user_ids) #if user_ids else WordLists.objects.none()
         return queryset
 
+    # def get_queryset(self):
+    #     # queryset = super().get_queryset()
+    #     user_ids = self.request.GET.getlist('users')
+    #
+    #     if user_ids:
+    #         queryset = queryset.filter(user__in=user_ids)
+    #     return queryset
+
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class()
-        user_ids = self.request.POST.getlist('users')
-        if user_ids:
-            context['wordlists'] = WordLists.objects.filter(user__in=user_ids)
         return context
 
     def post(self, request, *args, **kwargs):
         user_ids = self.request.POST.getlist('users')
+
         if user_ids:
-            wordlists = WordLists.objects.filter(user__in=user_ids)
-            print(wordlists)
-            context = {'wordlists_list': wordlists}
+            queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
+            # .select_related('user')でクエリがレコードの数だけクエリが発行されていたのが3本になった
+            paginator = Paginator(queryset, self.paginate_by)
+            page_number = self.request.GET.get('page')  #None
+            page_obj = paginator.get_page(page_number)#1of4
+            context = {'wordlists_list': queryset,'page_obj': page_obj}
             return render(request, 'english_list/list_word.html', context)
         else:
             return self.get(request, *args, **kwargs)
-
-
 
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする
