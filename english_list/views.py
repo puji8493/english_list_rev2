@@ -198,14 +198,6 @@ class CheckUserListView(ListView):
         queryset = WordLists.objects.filter(user__in=user_ids) #if user_ids else WordLists.objects.none()
         return queryset
 
-    # def get_queryset(self):
-    #     # queryset = super().get_queryset()
-    #     user_ids = self.request.GET.getlist('users')
-    #
-    #     if user_ids:
-    #         queryset = queryset.filter(user__in=user_ids)
-    #     return queryset
-
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
