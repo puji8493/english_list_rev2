@@ -2,6 +2,9 @@ from django import forms
 from .models import WordLists
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from accounts.models import CustomUser
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+
 
 class BaseForm(forms.ModelForm):
     en_word = forms.CharField(label='英語', widget=forms.Textarea(attrs={'rows': 5, 'cols': 50}))
@@ -28,6 +31,7 @@ class BaseForm(forms.ModelForm):
 class UserForm(BaseForm):
     """新規登録するためのフォーム BaseFormを継承
        重複をチェックするメソッドだけ追加"""
+
     def clean_en_word(self):
         en_word = self.cleaned_data['en_word']
         if WordLists.objects.filter(en_word__iexact=en_word).exists():
@@ -39,11 +43,13 @@ class WordUpdateForm(BaseForm):
     """編集するためのフォーム　BaseFormを継承"""
     pass
 
+
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+
 
 class SignUpForm(UserCreationForm):
     class Meta:
@@ -51,16 +57,35 @@ class SignUpForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2')
 
 
-class zCSVUploadForm(forms.Form):
-    """CSVファイルをアップロードするためのフォーム"""
-    file = forms.FileField(label='CSVファイル')
+class WordListForm(forms.ModelForm):
+    users = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
 
-    def clean_file(self):
-        file = self.cleaned_data['file']
-        if file:
-            if file.size > 500 * 1024:
-                raise forms.ValidationError('ファイルサイズは500KB以下にしてください。')
-        return file
+    class Meta:
+        model = WordLists
+        fields = ['users']
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.user.clear()
+        for user in self.cleaned_data['users']:
+            instance.user.add(user)
+        if commit:
+            instance.save()
+        return instance
+
+# class CSVUploadForm(forms.Form):
+#     """CSVファイルをアップロードするためのフォーム"""
+#     file = forms.FileField(label='CSVファイル')
+#
+#     def clean_file(self):
+#         file = self.cleaned_data['file']
+#         if file:
+#             if file.size > 500 * 1024:
+#                 raise forms.ValidationError('ファイルサイズは500KB以下にしてください。')
+#         return file
 
 # class CategoryFilterForm(forms.Form):
 #     CATEGORY_CHOICES = [

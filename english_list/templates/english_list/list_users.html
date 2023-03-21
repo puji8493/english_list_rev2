@@ -1,0 +1,12 @@
+<form method="post" enctype="multipart/form-data">
+{#<form method="post" enctype="multipart/form-data" action="{% url 'english_list:list_word' %}">#}
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">実行</button>
+</form>
+
+{% for object in wordlists_list %}
+    <p>{{ object.ja_word }} {{ object.en_word }}</p>
+{% empty %}
+    <p>No wordlists found</p>
+{% endfor %}

@@ -4,15 +4,23 @@ body{
 
 }
 
-hi{
-    font-size: 2.2em;
-    font-weight: bold;
-    height: 50px;
-    background-color: silver;
-    padding-left: 10px;
-    color: blueviolet;
-    margin-bottom: 30px;
+header {
+  width: 100%;
+  height: 50px;
+  background-color: gray;
+  padding-left: 30px;
+  padding-right: 30px;
+  box-sizing: border-box;
 }
+/*hi{*/
+/*    font-size: 2.2em;*/
+/*    font-weight: bold;*/
+/*    height: 50px;*/
+/*    background-color: silver;*/
+/*    padding-left: 10px;*/
+/*    color: blueviolet;*/
+/*    margin-bottom: 30px;*/
+/*}*/
 h2{
     font-size: 1.5em;
     font-weight: bold;

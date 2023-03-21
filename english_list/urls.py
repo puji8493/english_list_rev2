@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (IndexView, FormView, WordDetailView, WordUpdateView, WordDeleteView,
-                    WordListView,CreateWordView,Login,Logout,SignUpView,GenerateCsvView)
+                    WordListView,CreateWordView,Login,Logout,SignUpView,GenerateCsvView,
+                    CheckUserListView,)
 
 
 app_name = 'english_list'
@@ -15,4 +16,5 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('export/', GenerateCsvView.as_view(), name='export'),
+    path('select_users/', CheckUserListView.as_view(), name='select_users'),
 ]

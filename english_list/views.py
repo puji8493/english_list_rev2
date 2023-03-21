@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from .models import WordLists
 from . import forms
 from django.views.generic.base import View
@@ -186,12 +186,47 @@ class FormView(LoginRequiredMixin, View):
         return render(request, 'english_list/form_create_view.html', {'form': form})
 
 
+class CheckUserListView(ListView):
+    model = WordLists
+    template_name = 'english_list/list_users.html'
+    context_object_name = 'wordlists'
+    form_class = forms.WordListForm
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user_ids = self.request.POST.getlist('users')
+        if user_ids:
+            queryset = queryset.filter(user__in=user_ids)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class()
+        user_ids = self.request.POST.getlist('users')
+        if user_ids:
+            context['wordlists'] = WordLists.objects.filter(user__in=user_ids)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user_ids = self.request.POST.getlist('users')
+        if user_ids:
+            wordlists = WordLists.objects.filter(user__in=user_ids)
+            print(wordlists)
+            context = {'wordlists_list': wordlists}
+            return render(request, 'english_list/list_word.html', context)
+        else:
+            return self.get(request, *args, **kwargs)
+
+
+
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする
         チェックボックスONの場合はログインユーザーの単語リストをダウンロードする
         チェックボックスOFFの場合はログインユーザーの単語リストをダウンロードする
         ユーザーログインしていない場合は、ログイン画面へ遷移する
     """
+
     def get_queryset(self):
 
         queryset = super().get_queryset()
