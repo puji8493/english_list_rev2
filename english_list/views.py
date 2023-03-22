@@ -95,6 +95,34 @@ class WordListView(ListView):
 
         return super().get(request, *args, **kwargs)
 
+    # def post(self, request, *args, **kwargs):
+    #     # フォームの値を取得
+    #     form = WordListForm(request.POST)
+    #     if form.is_valid():
+    #         user_ids = [str(user.id) for user in form.cleaned_data['users']]
+    #         # 検索結果を表示するURLにリダイレクト
+    #         return redirect(reverse('list_word', kwargs={'user_ids': user_ids}))
+    #
+    #     # フォームが無効な場合は、通常のGETリクエストを処理
+    #     return self.get(request, *args, **kwargs)
+    #
+    # def get(self, request, *args, **kwargs):
+    #     # ユーザーIDのリストを取得
+    #     user_ids = self.kwargs.get('user_ids')
+    #     if user_ids:
+    #         queryset = self.get_queryset().filter(user__in=user_ids)
+    #     else:
+    #         queryset = self.get_queryset()
+    #
+    #     # ページネーションを設定
+    #     paginator = Paginator(queryset, self.paginate_by)
+    #     page_number = request.GET.get('page')
+    #     page_obj = paginator.get_page(page_number)
+    #
+    #     # コンテキストを設定してテンプレートをレンダリング
+    #     context = self.get_context_data(page_obj=page_obj)
+    #     return self.render_to_response
+
 
 class CreateWordView(LoginRequiredMixin, CreateView):
     """新規登録"""
@@ -215,6 +243,7 @@ class CheckUserListView(ListView):
             page_obj = paginator.get_page(page_number)#1of4
             context = {'wordlists_list': queryset,'page_obj': page_obj}
             return render(request, 'english_list/list_word.html', context)
+            # return redirect('english_list:list_word', user_ids=user_ids)
         else:
             return self.get(request, *args, **kwargs)
 

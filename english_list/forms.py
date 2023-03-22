@@ -58,16 +58,27 @@ class SignUpForm(UserCreationForm):
 
 
 class WordListForm(forms.ModelForm):
+    """
+    WordListsモデルのusersフィールドを一覧表示して、選択、フィルタリングするフォーム
+    queryset:選択肢としてCustomUserのクエリセットを使う
+    widget:CheckboxSelectMultiple
+        　　CustomUserモデルの全てのオブジェクトを選択可能とする。
+    Meta:  このフォームがWordListsモデルに関連付けられることを指定
+    fields: usersフィールドのみ表示する
+    """
+
     users = forms.ModelMultipleChoiceField(
         queryset=CustomUser.objects.all(),
         widget=forms.CheckboxSelectMultiple
     )
 
     class Meta:
+
         model = WordLists
         fields = ['users']
 
     def save(self, commit=True):
+
         instance = super().save(commit=False)
         instance.user.clear()
         for user in self.cleaned_data['users']:
