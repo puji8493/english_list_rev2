@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
+from urllib.parse import urlencode
 
 import csv
 
@@ -94,34 +95,6 @@ class WordListView(ListView):
             request.session.pop('my_list', None)
 
         return super().get(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     # フォームの値を取得
-    #     form = WordListForm(request.POST)
-    #     if form.is_valid():
-    #         user_ids = [str(user.id) for user in form.cleaned_data['users']]
-    #         # 検索結果を表示するURLにリダイレクト
-    #         return redirect(reverse('list_word', kwargs={'user_ids': user_ids}))
-    #
-    #     # フォームが無効な場合は、通常のGETリクエストを処理
-    #     return self.get(request, *args, **kwargs)
-    #
-    # def get(self, request, *args, **kwargs):
-    #     # ユーザーIDのリストを取得
-    #     user_ids = self.kwargs.get('user_ids')
-    #     if user_ids:
-    #         queryset = self.get_queryset().filter(user__in=user_ids)
-    #     else:
-    #         queryset = self.get_queryset()
-    #
-    #     # ページネーションを設定
-    #     paginator = Paginator(queryset, self.paginate_by)
-    #     page_number = request.GET.get('page')
-    #     page_obj = paginator.get_page(page_number)
-    #
-    #     # コンテキストを設定してテンプレートをレンダリング
-    #     context = self.get_context_data(page_obj=page_obj)
-    #     return self.render_to_response
 
 
 class CreateWordView(LoginRequiredMixin, CreateView):
@@ -222,30 +195,96 @@ class CheckUserListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        ListViewで表示するオブジェクトのクエリセットを取得する
+        user_ids:リクエストのクエリパラメータからusersという名前のリストを取得
+        :return: user_idsでクエリをフィルタリングしてqueryset変数に代入。
+        """
+
+        queryset = super().get_queryset().select_related('user')
         user_ids = self.request.GET.getlist('users')
-        queryset = WordLists.objects.filter(user__in=user_ids) #if user_ids else WordLists.objects.none()
+        if user_ids:
+            queryset = queryset.filter(user__in=user_ids).select_related('users')
         return queryset
 
+
     def get_context_data(self, **kwargs):
+        """
+        ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
+
+        :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
+        :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
+        :paginator: Paginatorオブジェクト
+        :is_paginated: ページネーションが有効かどうか
+        :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
+        :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
+        """
 
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class()
+        context['form'] = self.form_class(self.request.GET)
+        context['page_obj'] = context['page_obj']
+        context['paginator'] = context['paginator']
+        context['is_paginated'] = context['is_paginated']
+        context['object_list'] = context['wordlists']
+        print(context, '〇context〇')
         return context
 
     def post(self, request, *args, **kwargs):
-        user_ids = self.request.POST.getlist('users')
+        """
+        ユーザーがフォームで選択したユーザーIDを使用してWordListsオブジェクトをフィルタリング
+        ページネーションされたリストを作成しコンテキスト変数に追加
+        renderを使用して、HTMLテンプレートにコンテキスト変数を渡してレスポンスを返す。
 
+        queryset:user__in=user_idsでフィルタリングされたオブジェクトのクエリセット
+        paginator:ページネーションするために、querysetをpaginate_byの数でページに分割
+        page_number:現在のページ番号を取得
+        page_obj:現在のページのオブジェクト
+
+        ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
+        query_params:現在のGETパラメーターをコピー
+                    　元のQueryDictオブジェクトのコピーを作成し、変更を加えることができる
+        query_params['page']:現在のページ番号を設定
+                    ページ番号をクエリパラメータに追加するために、query_paramsオブジェクトの'page'キーにpage_obj.numberを代入
+        query_string: query_paramsをURLエンコード
+                    　オブジェクトをエンコードされた文字列に変換。クエリパラメータがURLに追加。
+                    　この文字列は、テンプレートのページネーションリンクなどに使用される
+
+        context: ページネーションされたオブジェクトと関連する情報を含むコンテキスト辞書を作成します。
+        :return:contextを使って、list_users.htmlテンプレートを描画
+                usersの値が存在しない場合は、getメソッドを呼び出して通常の処理を実行
+        """
+
+        user_ids = self.request.POST.getlist('users')
         if user_ids:
             queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
-            # .select_related('user')でクエリがレコードの数だけクエリが発行されていたのが3本になった
             paginator = Paginator(queryset, self.paginate_by)
-            page_number = self.request.GET.get('page')  #None
-            page_obj = paginator.get_page(page_number)#1of4
-            context = {'wordlists_list': queryset,'page_obj': page_obj}
-            return render(request, 'english_list/list_word.html', context)
-            # return redirect('english_list:list_word', user_ids=user_ids)
+            page_number = self.request.GET.get('page') or 1
+            page_obj = paginator.get_page(page_number)
+
+            # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
+            query_params = self.request.GET.copy()
+            query_params['page'] = page_obj.number
+            query_string = urlencode(query_params)
+
+            context = {
+                'wordlists_list': page_obj,
+                'query_string': query_string,
+                'form': self.form_class(self.request.GET),
+                'is_paginated': True,
+                'paginator': paginator,
+                'page_obj': page_obj,
+                'object_list': page_obj.object_list,
+            }
+            print(context, '■context■')
+            return render(request, 'english_list/list_users.html', context)
         else:
             return self.get(request, *args, **kwargs)
+
+
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = Paginator(queryset, page_size)
+    #     page_number = self.request.GET.get('page')
+    #     return paginator.get_page(page_number)
 
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする
@@ -300,3 +339,56 @@ class SignUpView(CreateView):
         self.object = user
         messages.success(self.request, 'ユーザー登録が完了しました。')
         return HttpResponseRedirect(self.get_success_url())
+
+
+# class CheckUserListView(ListView):
+#
+#     model = WordLists
+#     template_name = 'english_list/list_users.html'
+#     context_object_name = 'wordlists'
+#     form_class = forms.WordListForm
+#     paginate_by = 10
+#
+#     def get_queryset(self):
+#         user_ids = self.request.GET.getlist('users')
+#         queryset = WordLists.objects.filter(user__in=user_ids) #if user_ids else WordLists.objects.none()
+#         return queryset
+#
+#     def get_context_data(self, **kwargs):
+#
+#         context = super().get_context_data(**kwargs)
+#         context['form'] = self.form_class()
+#
+#         # Add pagination parameters to URL
+#         query_params = self.request.GET.copy()
+#         print(query_params,'☆get_context_query_params☆')
+#         context['query_string'] = urlencode(query_params)
+#         return context
+#
+#     def post(self, request, *args, **kwargs):
+#         user_ids = self.request.POST.getlist('users')
+#
+#         if user_ids:
+#             queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
+#             paginator = Paginator(queryset, self.paginate_by)
+#             page_number = self.request.GET.get('page') or 1  #None
+#             print(page_number,"☆")
+#             page_obj = paginator.get_page(page_number)#1of4
+#
+#             # Add pagination parameters to URL
+#             query_params = self.request.GET.copy()
+#             query_params['page'] = page_obj.number
+#             query_string = urlencode(query_params)
+#
+#             context = {
+#                 'wordlists_list': page_obj,
+#                 'query_string': query_string,
+#             }
+#             print(context,"〇〇")
+#             return render(request, 'english_list/list_users.html', context)
+#             # return render(request, 'english_list/list_word.html', context)
+#             # return redirect('english_list:list_word')
+#             # return redirect('english_list:list_word', user_ids=user_ids)
+#
+#         else:
+#             return self.get(request, *args, **kwargs)

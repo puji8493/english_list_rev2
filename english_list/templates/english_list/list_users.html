@@ -1,3 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Serch_My_english_lists</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>
+    <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
 <form method="post" enctype="multipart/form-data">
 {#<form method="post" enctype="multipart/form-data" action="{% url 'english_list:list_word' %}">#}
     {% csrf_token %}
@@ -5,8 +16,108 @@
     <button type="submit">実行</button>
 </form>
 
-{#{% for object in wordlists_list %}#}
+{#{% for object in object_list %}#}
 {#    <p>{{ object.ja_word }} {{ object.en_word }}</p>#}
 {#{% empty %}#}
 {#    <p>No wordlists found</p>#}
 {#{% endfor %}#}
+
+<p>{{ message|safe }} </p>
+<header style="background-color: gray;color: cornsilk;text-align: center;font-size:50px;height: 30px;display: flex;align-items: center;justify-content: center;width: 100%;">
+    <P>{% if user.is_authenticated %}
+        <hi>{{ user.get_username }}さんの英文・英単語リスト</hi>
+    {% else %}
+        <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>
+    {% endif %}
+    </p>
+</header>
+<h2>こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i
+        class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br></h2>
+<a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>
+<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+<a href="{% url 'english_list:login' %}"> ログイン </a>
+<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+
+<form method="post" action="{% url 'english_list:list_word' %}">
+    {% csrf_token %}
+    <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示
+    </p>
+</form>
+<a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
+<a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
+
+<form method="get" action="{% url 'english_list:list_word' %}" method="get">
+    <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search"
+                       aria-label="Search" value="{{ category }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile"
+                                                                 style="color: deeppink"></i> カテゴリ検索
+        </button>
+    </p>
+</form>
+<form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
+    <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search"
+                         aria-label="Search" value="{{ keyword }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i>
+            単語検索
+        </button>
+    </p>
+</form>
+<form method="post" action="{% url 'english_list:export' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">CSVダウンロード</button>
+</form>
+
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+<table>
+    <tr>
+        <th class="th_id">ID</th>
+        <th class="th_category">カテゴリ</th>
+        <th class="th_ja_word">日本語</th>
+        <th class="th_en_word">英語</th>
+        <th class="th_memo">メモ</th>
+        <th class="th_image">画像</th>
+        <th class="th_user">投稿者</th>
+        <th class="th_edit">編集</th>
+        <th class="th_delete">削除</th>
+        <th class="th_detail">詳細</th>
+    </tr>
+
+    {% for object in object_list %}
+        <tr>
+            <td class="td_id">{{ object.id }}</td>
+            <td class="td_category">{{ object.category }}</td>
+            <td class="td_ja_word">{{ object.ja_word }}</td>
+            <td class="td_en_word">{{ object.en_word }}</td>
+            <td class="td_memo">{{ object.memo }}</td>
+            {% if object.file %}
+                <td class="td_image"><img width="100px" height="100px" src="{{ object.file.url }}"></td>
+            {% else %}
+                <td class="td_image">No image</td>
+            {% endif %}
+            <td class="td_user">{{ object.user.username }}</td>
+            <td class="td_edit"><a href="{% url 'english_list:edit_word' object.id %}">編集</a></td>
+            <td class="td_delete"><a href="{% url 'english_list:delete_word' object.id %}">削除</a></td>
+            <td class="td_detail"><a href="{% url 'english_list:detail_word' object.id %}">詳細</a></td>
+
+        </tr>
+    {% endfor %}
+</table>
+<br>
+</body>
+</html>
