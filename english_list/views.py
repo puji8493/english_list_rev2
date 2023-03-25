@@ -328,10 +328,10 @@ class CheckUserListView(ListView):
     #     print(context, '☆■context■☆')
     #     return self.render_to_response(context)
 
-# def paginate_queryset(self, queryset, page_size):
-#     paginator = Paginator(queryset, page_size)
-#     page_number = self.request.GET.get('page')
-#     return paginator.get_page(page_number)
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = Paginator(queryset, page_size)
+    #     page_number = self.request.GET.get('page')
+    #     return paginator.get_page(page_number)
 
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする
