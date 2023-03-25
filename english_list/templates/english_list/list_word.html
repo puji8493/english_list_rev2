@@ -1,4 +1,6 @@
 {% load static %}
+{% load tag %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -59,36 +61,22 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>
+            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
         {% endif %}
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span>{{ num }}</span>
+            {% else %}
+                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
         {% endif %}
     </span>
 </div>
-{% if wordlists.has_other_pages %}
-    <div class="pagination">
-        {% if wordlists.has_previous %}
-            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>
-        {% endif %}
-        {% for num in wordlists.paginator.page_range %}
-            {% if wordlists.number == num %}
-                <span class="current-page">{{ num }}</span>
-            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}
-                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-        {% if wordlists.has_next %}
-            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>
-        {% endif %}
-    </div>
-{% endif %}
+
 
 {#<div class="pagination">#}
 {#    <span class="step-links">#}
@@ -106,6 +94,24 @@
 {#        {% endif %}#}
 {#    </span>#}
 {#</div>#}
+{#{% if wordlists.has_other_pages %}#}
+{#    <div class="pagination">#}
+{#        {% if wordlists.has_previous %}#}
+{#            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>#}
+{#        {% endif %}#}
+{#        {% for num in wordlists.paginator.page_range %}#}
+{#            {% if wordlists.number == num %}#}
+{#                <span class="current-page">{{ num }}</span>#}
+{#            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}#}
+{#                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#        {% if wordlists.has_next %}#}
+{#            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#{% endif %}#}
+
 <table>
     <tr>
         <th class="th_id">ID</th>

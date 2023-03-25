@@ -14,7 +14,6 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from urllib.parse import urlencode
-
 import csv
 
 
@@ -186,13 +185,13 @@ class FormView(LoginRequiredMixin, View):
 
         return render(request, 'english_list/form_create_view.html', {'form': form})
 
-class CheckUserListView(ListView):
 
+class CheckUserListView(ListView):
     model = WordLists
     template_name = 'english_list/list_users.html'
     context_object_name = 'wordlists'
     form_class = forms.WordListForm
-    paginate_by = 10
+    paginate_by = 5
 
     def get_queryset(self):
         """
@@ -206,7 +205,6 @@ class CheckUserListView(ListView):
         if user_ids:
             queryset = queryset.filter(user__in=user_ids).select_related('users')
         return queryset
-
 
     def get_context_data(self, **kwargs):
         """
@@ -280,11 +278,60 @@ class CheckUserListView(ListView):
         else:
             return self.get(request, *args, **kwargs)
 
+    # def get(self, request, *args, **kwargs):
+    #
+    #     self.object_list = self.get_queryset()
+    #     print(self.object_list, '◇◇□self.object_list□◇◇')
+    #
+    #     # ページネーションするために、querysetをpaginate_byの数でページに分割
+    #     paginator = self.paginator_class(self.object_list, self.paginate_by)
+    #     print(paginator, '□paginator□')
+    #
+    #     # GETパラメーターから現在のページ番号を取得
+    #     page_number = None
+    #     if 'page' in request.GET:
+    #         page_number = request.GET['page']
+    #         try:
+    #             page_number = int(page_number)
+    #         except ValueError:
+    #             page_number = None
+    #
+    #     if page_number is not None:
+    #         try:
+    #             # 現在のページ番号に該当するページのオブジェクトを取得
+    #             page_obj = paginator.get_page(page_number)
+    #             print(page_obj, '□page_obj□')
+    #         except PageNotAnInteger:
+    #             # ページ番号が整数でない場合、最初のページを表示する
+    #             page_obj = paginator.get_page(1)
+    #         except EmptyPage:
+    #             # ページ番号が範囲外の場合、最後のページを表示する
+    #             page_obj = paginator.get_page(paginator.num_pages)
+    #     else:
+    #         # ページ番号が指定されていない場合、最初のページを表示する
+    #         page_obj = paginator.get_page(1)
+    #
+    #     # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
+    #     query_params = request.GET.copy()
+    #     query_params['page'] = page_obj.number
+    #     query_string = query_params.urlencode()
+    #     print(query_string, '□query_string□')
+    #
+    #     context = self.get_context_data(
+    #         form=self.form_class(request.GET),
+    #         page_obj=page_obj,
+    #         paginator=paginator,
+    #         is_paginated=True,
+    #         object_list=page_obj.object_list,
+    #         query_string=query_string
+    #     )
+    #     print(context, '☆■context■☆')
+    #     return self.render_to_response(context)
 
-    # def paginate_queryset(self, queryset, page_size):
-    #     paginator = Paginator(queryset, page_size)
-    #     page_number = self.request.GET.get('page')
-    #     return paginator.get_page(page_number)
+# def paginate_queryset(self, queryset, page_size):
+#     paginator = Paginator(queryset, page_size)
+#     page_number = self.request.GET.get('page')
+#     return paginator.get_page(page_number)
 
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする
@@ -339,7 +386,6 @@ class SignUpView(CreateView):
         self.object = user
         messages.success(self.request, 'ユーザー登録が完了しました。')
         return HttpResponseRedirect(self.get_success_url())
-
 
 # class CheckUserListView(ListView):
 #
