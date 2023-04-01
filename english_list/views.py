@@ -191,7 +191,7 @@ class CheckUserListView(ListView):
     template_name = 'english_list/list_users.html'
     context_object_name = 'wordlists'
     form_class = forms.WordListForm
-    paginate_by = 5
+    paginate_by = 3
 
     def get_queryset(self):
         """
@@ -201,9 +201,11 @@ class CheckUserListView(ListView):
         """
 
         queryset = super().get_queryset().select_related('user')
-        user_ids = self.request.GET.getlist('users')
+        user_ids = self.request.GET.getlist('user_id')
+        print('■user_id■',user_ids,sep=":")
         if user_ids:
-            queryset = queryset.filter(user__in=user_ids).select_related('users')
+            queryset = queryset.filter(user__in=user_ids).select_related('user')
+            print('■queryset■',queryset,sep=":")
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -217,66 +219,67 @@ class CheckUserListView(ListView):
         :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
         :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
         """
-
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET)
+
         context['page_obj'] = context['page_obj']
         context['paginator'] = context['paginator']
         context['is_paginated'] = context['is_paginated']
         context['object_list'] = context['wordlists']
-        print(context, '〇context〇')
+
+        print('■context■',context,sep="")
         return context
 
-    def post(self, request, *args, **kwargs):
-        """
-        ユーザーがフォームで選択したユーザーIDを使用してWordListsオブジェクトをフィルタリング
-        ページネーションされたリストを作成しコンテキスト変数に追加
-        renderを使用して、HTMLテンプレートにコンテキスト変数を渡してレスポンスを返す。
-
-        queryset:user__in=user_idsでフィルタリングされたオブジェクトのクエリセット
-        paginator:ページネーションするために、querysetをpaginate_byの数でページに分割
-        page_number:現在のページ番号を取得
-        page_obj:現在のページのオブジェクト
-
-        ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
-        query_params:現在のGETパラメーターをコピー
-                    　元のQueryDictオブジェクトのコピーを作成し、変更を加えることができる
-        query_params['page']:現在のページ番号を設定
-                    ページ番号をクエリパラメータに追加するために、query_paramsオブジェクトの'page'キーにpage_obj.numberを代入
-        query_string: query_paramsをURLエンコード
-                    　オブジェクトをエンコードされた文字列に変換。クエリパラメータがURLに追加。
-                    　この文字列は、テンプレートのページネーションリンクなどに使用される
-
-        context: ページネーションされたオブジェクトと関連する情報を含むコンテキスト辞書を作成します。
-        :return:contextを使って、list_users.htmlテンプレートを描画
-                usersの値が存在しない場合は、getメソッドを呼び出して通常の処理を実行
-        """
-
-        user_ids = self.request.POST.getlist('users')
-        if user_ids:
-            queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
-            paginator = Paginator(queryset, self.paginate_by)
-            page_number = self.request.GET.get('page') or 1
-            page_obj = paginator.get_page(page_number)
-
-            # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
-            query_params = self.request.GET.copy()
-            query_params['page'] = page_obj.number
-            query_string = urlencode(query_params)
-
-            context = {
-                'wordlists_list': page_obj,
-                'query_string': query_string,
-                'form': self.form_class(self.request.GET),
-                'is_paginated': True,
-                'paginator': paginator,
-                'page_obj': page_obj,
-                'object_list': page_obj.object_list,
-            }
-            print(context, '■context■')
-            return render(request, 'english_list/list_users.html', context)
-        else:
-            return self.get(request, *args, **kwargs)
+    # def post(self, request, *args, **kwargs):
+    #     """
+    #     ユーザーがフォームで選択したユーザーIDを使用してWordListsオブジェクトをフィルタリング
+    #     ページネーションされたリストを作成しコンテキスト変数に追加
+    #     renderを使用して、HTMLテンプレートにコンテキスト変数を渡してレスポンスを返す。
+    #
+    #     queryset:user__in=user_idsでフィルタリングされたオブジェクトのクエリセット
+    #     paginator:ページネーションするために、querysetをpaginate_byの数でページに分割
+    #     page_number:現在のページ番号を取得
+    #     page_obj:現在のページのオブジェクト
+    #
+    #     ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
+    #     query_params:現在のGETパラメーターをコピー
+    #                 　元のQueryDictオブジェクトのコピーを作成し、変更を加えることができる
+    #     query_params['page']:現在のページ番号を設定
+    #                 ページ番号をクエリパラメータに追加するために、query_paramsオブジェクトの'page'キーにpage_obj.numberを代入
+    #     query_string: query_paramsをURLエンコード
+    #                 　オブジェクトをエンコードされた文字列に変換。クエリパラメータがURLに追加。
+    #                 　この文字列は、テンプレートのページネーションリンクなどに使用される
+    #
+    #     context: ページネーションされたオブジェクトと関連する情報を含むコンテキスト辞書を作成します。
+    #     :return:contextを使って、list_users.htmlテンプレートを描画
+    #             usersの値が存在しない場合は、getメソッドを呼び出して通常の処理を実行
+    #     """
+    #
+    #     user_ids = self.request.POST.getlist('users')
+    #     if user_ids:
+    #         queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
+    #         paginator = Paginator(queryset, self.paginate_by)
+    #         page_number = self.request.GET.get('page') or 1
+    #         page_obj = paginator.get_page(page_number)
+    #
+    #         # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
+    #         query_params = self.request.GET.copy()
+    #         query_params['page'] = page_obj.number
+    #         query_string = urlencode(query_params)
+    #
+    #         context = {
+    #             'wordlists_list': page_obj,
+    #             'query_string': query_string,
+    #             'form': self.form_class(self.request.GET),
+    #             'is_paginated': True,
+    #             'paginator': paginator,
+    #             'page_obj': page_obj,
+    #             'object_list': page_obj.object_list,
+    #         }
+    #         print(context, '■context■')
+    #         return render(request, 'english_list/list_users.html', context)
+    #     else:
+    #         return self.get(request, *args, **kwargs)
 
     # def get(self, request, *args, **kwargs):
     #

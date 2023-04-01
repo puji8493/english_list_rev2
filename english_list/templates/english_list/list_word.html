@@ -58,30 +58,31 @@
 </form>
 
 
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <span>{{ num }}</span>
-            {% else %}
-                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
-        {% endif %}
-    </span>
-</div>
+{#<div class="pagination">#}
+{#    <span class="step-links">#}
+{#        {% if page_obj.has_previous %}#}
+{#            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>#}
+{#        {% endif %}#}
+{#        {% for num in page_obj.paginator.page_range %}#}
+{#            {% if page_obj.number == num %}#}
+{#                <span>{{ num }}</span>#}
+{#            {% else %}#}
+{#                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{##}
+{#        {% if page_obj.has_next %}#}
+{#            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>#}
+{#        {% endif %}#}
+{#    </span>#}
+{#</div>#}
 
 
 {#<div class="pagination">#}
 {#    <span class="step-links">#}
 {#        {% if page_obj.has_previous %}#}
 {#            <a href="?page=1">&laquo; first</a>#}
+{#            <a href="?keyword={ any_filter_value }}&?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
 {#            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
 {#        {% endif %}#}
 {#        <span class="current">#}
@@ -89,6 +90,7 @@
 {#        </span>#}
 {##}
 {#        {% if page_obj.has_next %}#}
+{#            <a href="?keyword={{ any_filtered_value }}&?page={{ page_obj.next_page_number }}">next</a>#}
 {#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
 {#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
 {#        {% endif %}#}
@@ -111,6 +113,41 @@
 {#        {% endif %}#}
 {#    </div>#}
 {#{% endif %}#}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            {% if category %}
+                <a href="?category={{ category }}&page=1">&laquo; first</a>
+                <a href="?category={{ category }}&page={{ page_obj.previous_page_number }}">前へ</a>
+            {% elif keyword %}
+                <a href="?keyword={{ keyword }}&page=1">&laquo; first</a>
+                <a href="?keyword={{ keyword }}&page={{ page_obj.previous_page_number }}">前へ</a>
+            {% else %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+            {% endif %}
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            {% if category %}
+                <a href="?category={{ category }}&page={{ page_obj.next_page_number }}">次へ</a>
+                <a href="?category={{ category }}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+            {% elif keyword %}
+                <a href="?keyword={{ keyword }}&page={{ page_obj.next_page_number }}">次へ</a>
+                <a href="?keyword={{ keyword }}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+            {% else %}
+                <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+            {% endif %}
+        {% endif %}
+    </span>
+</div>
+
+
 
 <table>
     <tr>

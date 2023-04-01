@@ -67,24 +67,26 @@ class WordListForm(forms.ModelForm):
     fields: usersフィールドのみ表示する
     """
 
-    users = forms.ModelMultipleChoiceField(
+    user_id = forms.ModelMultipleChoiceField(
         queryset=CustomUser.objects.all(),
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.CheckboxSelectMultiple,
+        to_field_name='id'
     )
 
     class Meta:
 
         model = WordLists
-        fields = ['users']
+        fields = ['user']
 
     def save(self, commit=True):
 
         instance = super().save(commit=False)
         instance.user.clear()
-        for user in self.cleaned_data['users']:
+        for user in self.cleaned_data['user']:
             instance.user.add(user)
         if commit:
             instance.save()
+        print("■instance.user■",instance.user)
         return instance
 
 

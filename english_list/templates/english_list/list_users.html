@@ -1,5 +1,4 @@
 {% load static %}
-{% load tag %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -10,19 +9,6 @@
     <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-<form method="post" enctype="multipart/form-data">
-{#<form method="post" enctype="multipart/form-data" action="{% url 'english_list:list_word' %}">#}
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">実行</button>
-</form>
-
-{#{% for object in object_list %}#}
-{#    <p>{{ object.ja_word }} {{ object.en_word }}</p>#}
-{#{% empty %}#}
-{#    <p>No wordlists found</p>#}
-{#{% endfor %}#}
 
 <p>{{ message|safe }} </p>
 <header style="background-color: gray;color: cornsilk;text-align: center;font-size:50px;height: 30px;display: flex;align-items: center;justify-content: center;width: 100%;">
@@ -40,82 +26,40 @@
 <a href="{% url 'english_list:login' %}"> ログイン </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 
-<form method="post" action="{% url 'english_list:list_word' %}">
-    {% csrf_token %}
-    <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示
-    </p>
+<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">
+{#<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">#}
+    {{ form.user_id }}
+    <button type="submit">実行</button>
 </form>
+
 <a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
 <a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
-<form method="get" action="{% url 'english_list:list_word' %}" method="get">
-    <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search"
-                       aria-label="Search" value="{{ category }}">
-        <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile"
-                                                                 style="color: deeppink"></i> カテゴリ検索
-        </button>
-    </p>
-</form>
-<form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
-    <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search"
-                         aria-label="Search" value="{{ keyword }}">
-        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i>
-            単語検索
-        </button>
-    </p>
-</form>
 
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <span>{{ num }}</span>
-            {% else %}
-                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
+{% if page_obj.has_previous %}
+  {% if user_id %}
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page=1">&laquo; first</a>
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">前へ</a>
+{#  {% else %}#}
+{#    <a href="{% url 'english_list:select_users' %}?page=1">&laquo; first</a>#}
+{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.previous_page_number }}">前へ</a>#}
+  {% endif %}
+{% endif %}
 
-        {% if page_obj.has_next %}
-            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
-        {% endif %}
-    </span>
-</div>
-{#<div class="pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?page=1">&laquo; first</a>#}
-{#            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
-{#        {% endif %}#}
-{#        <span class="current">#}
-{#            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
-{#        </span>#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
-{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#</div>#}
-{#{% if wordlists.has_other_pages %}#}
-{#    <div class="pagination">#}
-{#        {% if wordlists.has_previous %}#}
-{#            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>#}
-{#        {% endif %}#}
-{#        {% for num in wordlists.paginator.page_range %}#}
-{#            {% if wordlists.number == num %}#}
-{#                <span class="current-page">{{ num }}</span>#}
-{#            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}#}
-{#                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>#}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-{#        {% if wordlists.has_next %}#}
-{#            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>#}
-{#        {% endif %}#}
-{#    </div>#}
-{#{% endif %}#}
+<span class="current">
+  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+</span>
+
+{% if page_obj.has_next %}
+  {% if user_id %}
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ</a>
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+{#  {% else %}#}
+{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.next_page_number }}">次へ</a>#}
+{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>#}
+  {% endif %}
+{% endif %}
+
 
 <table>
     <tr>

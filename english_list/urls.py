@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (IndexView, FormView, WordDetailView, WordUpdateView, WordDeleteView,
                     WordListView,CreateWordView,Login,Logout,SignUpView,GenerateCsvView,
                     CheckUserListView,)
-
+from django.urls import re_path
 
 app_name = 'english_list'
 urlpatterns = [
@@ -17,4 +17,5 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('export/', GenerateCsvView.as_view(), name='export'),
     path('select_users/', CheckUserListView.as_view(), name='select_users'),
+    # re_path(r'^select_users/(?P<user>\d+)/$', CheckUserListView.as_view(), name='select_users'),
 ]

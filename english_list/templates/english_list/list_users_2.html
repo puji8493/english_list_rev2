@@ -1,0 +1,178 @@
+{% load static %}
+{% load tag %}
+
+<section class="section" id="form-area">
+    <!-- tag でフィルターする input form を用意する -->
+    <form action="" method="get">
+        <input type="text" name="user" value="{{ user }}"/>
+        <input type="submit" value="Filter"/>
+    </form>
+</section>
+
+    <section class="section page-controls" id="header">
+        <!-- pagination のコントロールを表示する -->
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&user={{ user }}">Previous</a>
+        {% endif %}
+
+        {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+                <span>{{ i }}</span>
+            {% else %}
+                <a href="?page={{ i }}&user={{ user }}">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&user={{ user }}">Next</a>
+        {% endif %}
+    </section>
+
+    <section class="section entry-list" id="entry-list">
+        <!--
+            paginate されたリストを表示する Django の paginator を使う。
+            tag=tag とすることで、tag でフィルターされたリストを表示する。
+         -->
+        {% for entry in object_list %}
+            <div class="note">
+                <h2><a href="{% url 'note:entry_detail' entry.id %}">{{ entry.title }}</a></h2>
+                <p>{{ entry.content }}</p>
+                <p>{{ entry.created_at }}</p>
+                <p>{{ entry.updated_at }}</p>
+                <p>{{ entry.tags.all|join:", " }}</p>
+            </div>
+        {% endfor %}
+    </section>
+
+    <section class="section page-controls" id="footer">
+        <!-- pagination のコントロールを表示する -->
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&user={{ user }}">Previous</a>
+        {% endif %}
+
+        {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+                <span>{{ i }}</span>
+            {% else %}
+                <a href="?page={{ i }}&user={{ user }}">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&user={{ user }}">Next</a>
+        {% endif %}
+    </section>
+{% endblock %}
+
+
+<a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
+<a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
+
+<form method="get" action="{% url 'english_list:list_word' %}" method="get">
+    <p>カテゴリ検索　<input name="category" class="form-control me-2" type="search" type="text" placeholder="Search"
+                       aria-label="Search" value="{{ category }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="fa-sharp fa-regular fa-face-smile"
+                                                                 style="color: deeppink"></i> カテゴリ検索
+        </button>
+    </p>
+</form>
+<form class="d-flex" action="{% url 'english_list:list_word' %}" method="get">
+    <p>単語検索　　　<input name="keyword" class="form-control me-2" type="search" type="text" placeholder="Search"
+                         aria-label="Search" value="{{ keyword }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search" style="color: deepskyblue"></i>
+            単語検索
+        </button>
+    </p>
+</form>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span>{{ num }}</span>
+            {% else %}
+                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
+        {% endif %}
+    </span>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?keyword={{ any_filtered_value }}&page={{ page_obj.next_page_number }} ">next</a>
+{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% if wordlists.has_other_pages %}
+    <div class="pagination">
+        {% if wordlists.has_previous %}
+            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>
+        {% endif %}
+        {% for num in wordlists.paginator.page_range %}
+            {% if wordlists.number == num %}
+                <span class="current-page">{{ num }}</span>
+            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}
+                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if wordlists.has_next %}
+            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<table>
+    <tr>
+        <th class="th_id">ID</th>
+        <th class="th_category">カテゴリ</th>
+        <th class="th_ja_word">日本語</th>
+        <th class="th_en_word">英語</th>
+        <th class="th_memo">メモ</th>
+        <th class="th_image">画像</th>
+        <th class="th_user">投稿者</th>
+        <th class="th_edit">編集</th>
+        <th class="th_delete">削除</th>
+        <th class="th_detail">詳細</th>
+    </tr>
+
+    {% for object in object_list %}
+        <tr>
+            <td class="td_id">{{ object.id }}</td>
+            <td class="td_category">{{ object.category }}</td>
+            <td class="td_ja_word">{{ object.ja_word }}</td>
+            <td class="td_en_word">{{ object.en_word }}</td>
+            <td class="td_memo">{{ object.memo }}</td>
+            {% if object.file %}
+                <td class="td_image"><img width="100px" height="100px" src="{{ object.file.url }}"></td>
+            {% else %}
+                <td class="td_image">No image</td>
+            {% endif %}
+            <td class="td_user">{{ object.user.username }}</td>
+            <td class="td_edit"><a href="{% url 'english_list:edit_word' object.id %}">編集</a></td>
+            <td class="td_delete"><a href="{% url 'english_list:delete_word' object.id %}">削除</a></td>
+            <td class="td_detail"><a href="{% url 'english_list:detail_word' object.id %}">詳細</a></td>
+
+        </tr>
+    {% endfor %}
+</table>
+<br>
+</body>
+</html>
