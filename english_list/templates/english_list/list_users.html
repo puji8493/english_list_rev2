@@ -26,23 +26,31 @@
 <a href="{% url 'english_list:login' %}"> ログイン </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 
-<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">
 {#<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">#}
-    {{ form.user_id }}
+{#    {{ form.user_id }}#}
+{#    <button type="submit">実行</button>#}
+{#</form>#}
+
+<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">
+    {% for user in form.user_id %}
+        <label>
+            {{ user }}
+        </label>
+    {% endfor %}
     <button type="submit">実行</button>
 </form>
+
 
 <a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
 <a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
-
 {% if page_obj.has_previous %}
   {% if user_id %}
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page=1">&laquo; first</a>
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">前へ</a>
-{#  {% else %}#}
-{#    <a href="{% url 'english_list:select_users' %}?page=1">&laquo; first</a>#}
-{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.previous_page_number }}">前へ</a>#}
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page=1">&laquo; ☆最初☆</a>
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">☆前へ☆</a>
+  {% else %}
+    <a href="{% url 'english_list:select_users' %}?page=1">&laquo; first■   </a>
+    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.previous_page_number }}">前へ■</a>
   {% endif %}
 {% endif %}
 
@@ -51,10 +59,13 @@
 </span>
 
 {% if page_obj.has_next %}
+{# {% if user_id|default_if_none:'' %}#}
   {% if user_id %}
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ</a>
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ☆</a>
     <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
-{#  {% else %}#}
+  {% else %}
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ▲</a>
+    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.paginator.num_pages }}">最後▲ &raquo;</a>
 {#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.next_page_number }}">次へ</a>#}
 {#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>#}
   {% endif %}

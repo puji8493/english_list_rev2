@@ -196,7 +196,7 @@ class CheckUserListView(ListView):
     def get_queryset(self):
         """
         ListViewで表示するオブジェクトのクエリセットを取得する
-        user_ids:リクエストのクエリパラメータからusersという名前のリストを取得
+         user_ids:リクエストのクエリパラメータからusersという名前のリストを取得
         :return: user_idsでクエリをフィルタリングしてqueryset変数に代入。
         """
 
@@ -208,27 +208,62 @@ class CheckUserListView(ListView):
             print('■queryset■',queryset,sep=":")
         return queryset
 
+    # def get_context_data(self, **kwargs):
+    #     """
+    #     ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
+    #
+    #     :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
+    #     :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
+    #     :paginator: Paginatorオブジェクト
+    #     :is_paginated: ページネーションが有効かどうか
+    #     :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
+    #     :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
+    #     """
+    #     context = super().get_context_data(**kwargs)
+    #     context['form'] = self.form_class(self.request.GET)
+    #
+    #     context['page_obj'] = context['page_obj']
+    #     print("■page_obj■",context['page_obj'],sep="")
+    #     context['paginator'] = context['paginator']
+    #     print("■pagenator■",context['paginator'],sep="")
+    #     context['is_paginated'] = context['is_paginated']
+    #     print("■is_paginated■",context['is_paginated'],sep="")
+    #     context['object_list'] = context['wordlists']
+    #     print("■object_list■",context['wordlists'],sep="")
+    #
+    #     # print('■context■',context,sep="")
+    #     return context
+
     def get_context_data(self, **kwargs):
-        """
-        ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
-
-        :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
-        :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
-        :paginator: Paginatorオブジェクト
-        :is_paginated: ページネーションが有効かどうか
-        :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
-        :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
-        """
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class(self.request.GET)
+        form = self.form_class(self.request.GET or None)
+        if form.is_valid():
+            self.request.session['form_data'] = {'user_ids': form.cleaned_data.get('users')}
+            return redirect(reverse_lazy('list_users'))
 
+        form_data = self.request.session.get('form_data')
+        if form_data:
+            user_ids = form_data.get('user_ids')
+            form = self.form_class(initial={'user_id': user_ids})
+            # 選択されたユーザーを指定する
+            form.fields['user_id'].initial = user_ids
+
+        # 選択されたユーザーを指定する
+        selected_user_ids = self.request.GET.getlist('user_id')
+        form.fields['user'].initial = selected_user_ids
+
+        context['form'] = form
         context['page_obj'] = context['page_obj']
         context['paginator'] = context['paginator']
         context['is_paginated'] = context['is_paginated']
         context['object_list'] = context['wordlists']
 
-        print('■context■',context,sep="")
+        self.request.session.pop('form_data', None)
+
         return context
+
+
+
 
     # def post(self, request, *args, **kwargs):
     #     """
