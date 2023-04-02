@@ -43,7 +43,7 @@
 <a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
 <a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
-{#カスタムテンプレートを使用#}
+{#カスタムテンプレートを使用　ページネーションコントロール ok #}
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -65,7 +65,7 @@
     </span>
 </div>
 
-{#クエリ文字列パラメーターを指定#}
+{#クエリ文字列パラメーターを指定 ページネーションコントロール NG #}
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
