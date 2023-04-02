@@ -1,4 +1,5 @@
 {% load static %}
+{% load tag %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -19,17 +20,13 @@
     {% endif %}
     </p>
 </header>
-<h2>こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i
-        class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br></h2>
+
+<br>
 <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 <a href="{% url 'english_list:login' %}"> ログイン </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-
-{#<form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">#}
-{#    {{ form.user_id }}#}
-{#    <button type="submit">実行</button>#}
-{#</form>#}
+<br>
 
 <form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">
     {% for user in form.user_id %}
@@ -37,40 +34,58 @@
             {{ user }}
         </label>
     {% endfor %}
+{#    {% for id in user_id %}#}
+{#        <input type="hidden" name="user_id" value="{{ id }}">#}
+{#    {% endfor %}#}
     <button type="submit">実行</button>
 </form>
-
 
 <a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
 <a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
-{% if page_obj.has_previous %}
-  {% if user_id %}
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page=1">&laquo; ☆最初☆</a>
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">☆前へ☆</a>
-  {% else %}
-    <a href="{% url 'english_list:select_users' %}?page=1">&laquo; first■   </a>
-    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.previous_page_number }}">前へ■</a>
-  {% endif %}
-{% endif %}
+{#カスタムテンプレートを使用#}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span>{{ num }}</span>
+            {% else %}
+                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
+        {% endif %}
+    </span>
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+</div>
 
-<span class="current">
-  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-</span>
-
-{% if page_obj.has_next %}
-{# {% if user_id|default_if_none:'' %}#}
-  {% if user_id %}
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ☆</a>
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
-  {% else %}
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ▲</a>
-    <a href="{% url 'english_list:select_users' %}?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.paginator.num_pages }}">最後▲ &raquo;</a>
-{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.next_page_number }}">次へ</a>#}
-{#    <a href="{% url 'english_list:select_users' %}?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>#}
-  {% endif %}
-{% endif %}
-
+{#クエリ文字列パラメーターを指定#}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">前へ</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span>{{ num }}</span>
+            {% else %}
+                <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ</a>
+        {% endif %}
+    </span>
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+</div>
 
 <table>
     <tr>

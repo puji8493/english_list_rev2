@@ -13,17 +13,18 @@ def url_replace(request, field, value):
             つまり、URLの ? 以降の部分。　ex) keyword=p&page=2
     """
 
-    print(field,value,'--field,value--')
-    #　現在のURLのクエリパラメータの情報を取得し、それを辞書型オブジェクト url_dict にコピー
+    print('--field,value--',field,value,sep=':')
+    print('現在のURLのクエリパラメータの情報を取得し、それを辞書型オブジェクト url_dict にコピー')
+
     url_dict = request.GET.copy()
-    print(url_dict,'--url_dict--')
-    #　<QueryDict: {'category': ['IT'], 'page': ['4']}> --url_dict--
+    print('--url_dict--',url_dict,sep=':')
+    print("<QueryDict: {'category': ['IT'], 'page': ['4']}>")
 
     url_dict[field] = str(value)
-    print(url_dict[field],'--url_dict[field]--')
-    # 2 - -url_dict[field] - -
+    print('--url_dict[field]--',url_dict[field],sep=':')
+    print('2 - -url_dict[field] - -')
 
-    print(url_dict.urlencode(),'--return--')
-    # category=IT&page=2 --return--
+    print('--return--',url_dict.urlencode(),sep=':')
+    print('category=IT&page=2 --return--')
 
     return url_dict.urlencode()

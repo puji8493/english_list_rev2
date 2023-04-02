@@ -208,168 +208,32 @@ class CheckUserListView(ListView):
             print('■queryset■',queryset,sep=":")
         return queryset
 
-    # def get_context_data(self, **kwargs):
-    #     """
-    #     ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
-    #
-    #     :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
-    #     :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
-    #     :paginator: Paginatorオブジェクト
-    #     :is_paginated: ページネーションが有効かどうか
-    #     :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
-    #     :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
-    #     """
-    #     context = super().get_context_data(**kwargs)
-    #     context['form'] = self.form_class(self.request.GET)
-    #
-    #     context['page_obj'] = context['page_obj']
-    #     print("■page_obj■",context['page_obj'],sep="")
-    #     context['paginator'] = context['paginator']
-    #     print("■pagenator■",context['paginator'],sep="")
-    #     context['is_paginated'] = context['is_paginated']
-    #     print("■is_paginated■",context['is_paginated'],sep="")
-    #     context['object_list'] = context['wordlists']
-    #     print("■object_list■",context['wordlists'],sep="")
-    #
-    #     # print('■context■',context,sep="")
-    #     return context
-
     def get_context_data(self, **kwargs):
+        """
+        ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
+
+        :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
+        :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
+        :paginator: Paginatorオブジェクト
+        :is_paginated: ページネーションが有効かどうか
+        :object_list: ページネーションされたオブジェクトのリスト（QuerySet）
+        :return:form、page_obj、paginator、is_paginated、object_listというキーを持つディクショナリー
+        """
         context = super().get_context_data(**kwargs)
-        form = self.form_class(self.request.GET or None)
-        if form.is_valid():
-            self.request.session['form_data'] = {'user_ids': form.cleaned_data.get('users')}
-            return redirect(reverse_lazy('list_users'))
+        context['form'] = self.form_class(self.request.GET)
 
-        form_data = self.request.session.get('form_data')
-        if form_data:
-            user_ids = form_data.get('user_ids')
-            form = self.form_class(initial={'user_id': user_ids})
-            # 選択されたユーザーを指定する
-            form.fields['user_id'].initial = user_ids
-
-        # 選択されたユーザーを指定する
-        selected_user_ids = self.request.GET.getlist('user_id')
-        form.fields['user'].initial = selected_user_ids
-
-        context['form'] = form
         context['page_obj'] = context['page_obj']
+        print("■page_obj■",context['page_obj'],sep="")
         context['paginator'] = context['paginator']
+        print("■pagenator■",context['paginator'],sep="")
         context['is_paginated'] = context['is_paginated']
+        print("■is_paginated■",context['is_paginated'],sep="")
         context['object_list'] = context['wordlists']
+        print("■object_list■",context['wordlists'],sep="")
 
-        self.request.session.pop('form_data', None)
-
+        # print('■context■',context,sep="")
         return context
 
-
-
-
-    # def post(self, request, *args, **kwargs):
-    #     """
-    #     ユーザーがフォームで選択したユーザーIDを使用してWordListsオブジェクトをフィルタリング
-    #     ページネーションされたリストを作成しコンテキスト変数に追加
-    #     renderを使用して、HTMLテンプレートにコンテキスト変数を渡してレスポンスを返す。
-    #
-    #     queryset:user__in=user_idsでフィルタリングされたオブジェクトのクエリセット
-    #     paginator:ページネーションするために、querysetをpaginate_byの数でページに分割
-    #     page_number:現在のページ番号を取得
-    #     page_obj:現在のページのオブジェクト
-    #
-    #     ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
-    #     query_params:現在のGETパラメーターをコピー
-    #                 　元のQueryDictオブジェクトのコピーを作成し、変更を加えることができる
-    #     query_params['page']:現在のページ番号を設定
-    #                 ページ番号をクエリパラメータに追加するために、query_paramsオブジェクトの'page'キーにpage_obj.numberを代入
-    #     query_string: query_paramsをURLエンコード
-    #                 　オブジェクトをエンコードされた文字列に変換。クエリパラメータがURLに追加。
-    #                 　この文字列は、テンプレートのページネーションリンクなどに使用される
-    #
-    #     context: ページネーションされたオブジェクトと関連する情報を含むコンテキスト辞書を作成します。
-    #     :return:contextを使って、list_users.htmlテンプレートを描画
-    #             usersの値が存在しない場合は、getメソッドを呼び出して通常の処理を実行
-    #     """
-    #
-    #     user_ids = self.request.POST.getlist('users')
-    #     if user_ids:
-    #         queryset = WordLists.objects.filter(user__in=user_ids).select_related('user')
-    #         paginator = Paginator(queryset, self.paginate_by)
-    #         page_number = self.request.GET.get('page') or 1
-    #         page_obj = paginator.get_page(page_number)
-    #
-    #         # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
-    #         query_params = self.request.GET.copy()
-    #         query_params['page'] = page_obj.number
-    #         query_string = urlencode(query_params)
-    #
-    #         context = {
-    #             'wordlists_list': page_obj,
-    #             'query_string': query_string,
-    #             'form': self.form_class(self.request.GET),
-    #             'is_paginated': True,
-    #             'paginator': paginator,
-    #             'page_obj': page_obj,
-    #             'object_list': page_obj.object_list,
-    #         }
-    #         print(context, '■context■')
-    #         return render(request, 'english_list/list_users.html', context)
-    #     else:
-    #         return self.get(request, *args, **kwargs)
-
-    # def get(self, request, *args, **kwargs):
-    #
-    #     self.object_list = self.get_queryset()
-    #     print(self.object_list, '◇◇□self.object_list□◇◇')
-    #
-    #     # ページネーションするために、querysetをpaginate_byの数でページに分割
-    #     paginator = self.paginator_class(self.object_list, self.paginate_by)
-    #     print(paginator, '□paginator□')
-    #
-    #     # GETパラメーターから現在のページ番号を取得
-    #     page_number = None
-    #     if 'page' in request.GET:
-    #         page_number = request.GET['page']
-    #         try:
-    #             page_number = int(page_number)
-    #         except ValueError:
-    #             page_number = None
-    #
-    #     if page_number is not None:
-    #         try:
-    #             # 現在のページ番号に該当するページのオブジェクトを取得
-    #             page_obj = paginator.get_page(page_number)
-    #             print(page_obj, '□page_obj□')
-    #         except PageNotAnInteger:
-    #             # ページ番号が整数でない場合、最初のページを表示する
-    #             page_obj = paginator.get_page(1)
-    #         except EmptyPage:
-    #             # ページ番号が範囲外の場合、最後のページを表示する
-    #             page_obj = paginator.get_page(paginator.num_pages)
-    #     else:
-    #         # ページ番号が指定されていない場合、最初のページを表示する
-    #         page_obj = paginator.get_page(1)
-    #
-    #     # ページネーションされたオブジェクトのページ番号をURLのクエリパラメータに追加する
-    #     query_params = request.GET.copy()
-    #     query_params['page'] = page_obj.number
-    #     query_string = query_params.urlencode()
-    #     print(query_string, '□query_string□')
-    #
-    #     context = self.get_context_data(
-    #         form=self.form_class(request.GET),
-    #         page_obj=page_obj,
-    #         paginator=paginator,
-    #         is_paginated=True,
-    #         object_list=page_obj.object_list,
-    #         query_string=query_string
-    #     )
-    #     print(context, '☆■context■☆')
-    #     return self.render_to_response(context)
-
-    # def paginate_queryset(self, queryset, page_size):
-    #     paginator = Paginator(queryset, page_size)
-    #     page_number = self.request.GET.get('page')
-    #     return paginator.get_page(page_number)
 
 class GenerateCsvView(LoginRequiredMixin, WordListView):
     """リストをCSVファイルにダウンロードする

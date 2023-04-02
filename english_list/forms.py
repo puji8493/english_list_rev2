@@ -60,9 +60,12 @@ class SignUpForm(UserCreationForm):
 class WordListForm(forms.ModelForm):
     """
     WordListsモデルのusersフィールドを一覧表示して、選択、フィルタリングするフォーム
+
+    user_id:複数のユーザーを選択するためのフィールド
     queryset:選択肢としてCustomUserのクエリセットを使う
     widget:CheckboxSelectMultiple
         　　CustomUserモデルの全てのオブジェクトを選択可能とする。
+    to_field_name:選択肢の値としてCustomUserモデルのidを使う
     Meta:  このフォームがWordListsモデルに関連付けられることを指定
     fields: usersフィールドのみ表示する
     """
@@ -74,11 +77,22 @@ class WordListForm(forms.ModelForm):
     )
 
     class Meta:
+        """Metaクラスを定義して、このフォームがWordListsモデルに関連付けられることを指定"""
 
         model = WordLists
         fields = ['user']
 
     def save(self, commit=True):
+        """
+        フォームの内容を保存する際に、instance.usersフィールドをクリアしてから、
+        選択されたCustomuserオブジェクトを追加する
+        ModelForm のサブクラスは既存のモデルイ ンスタンスをキーワード引数 instance にしてインスタンス化できる。
+        instance を指定してモデルフォームを生成すると、モデルフォームの save() はこのインスタンスを更新して保存する。
+        instance を指定しな ければ、 save() はモデルフォームで指定しているモデルの新たなインスタン スを生成して保存する。
+
+        :param commit:フォームの値を保存するかどうかのブール値
+        :return:instance:保存されたWordListsオブジェクト
+        """
 
         instance = super().save(commit=False)
         instance.user.clear()
@@ -86,7 +100,6 @@ class WordListForm(forms.ModelForm):
             instance.user.add(user)
         if commit:
             instance.save()
-        print("■instance.user■",instance.user)
         return instance
 
 

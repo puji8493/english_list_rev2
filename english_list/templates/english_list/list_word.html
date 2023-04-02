@@ -1,5 +1,4 @@
 {% load static %}
-{% load tag %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -19,15 +18,19 @@
     {% endif %}
     </p>
 </header>
-<h2>こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i
-        class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br></h2>
+
+<h2>
+    {% if user.is_authenticated %}
+    こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+    {% else %}
+    こんにちは☆ゲストさん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+    {% endif %}
+</h2>
+
 <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 <a href="{% url 'english_list:login' %}"> ログイン </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-{#<form method="get" action="{% url 'english_list:list_word' %}">#}
-    {#  <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示</p>#}
-{#</form>#}
 <form method="post" action="{% url 'english_list:list_word' %}">
     {% csrf_token %}
     <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示
@@ -58,62 +61,6 @@
 </form>
 
 
-{#<div class="pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>#}
-{#        {% endif %}#}
-{#        {% for num in page_obj.paginator.page_range %}#}
-{#            {% if page_obj.number == num %}#}
-{#                <span>{{ num }}</span>#}
-{#            {% else %}#}
-{#                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>#}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#</div>#}
-
-
-{#<div class="pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?page=1">&laquo; first</a>#}
-{#            <a href="?keyword={ any_filter_value }}&?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
-{#            <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>#}
-{#        {% endif %}#}
-{#        <span class="current">#}
-{#            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
-{#        </span>#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?keyword={{ any_filtered_value }}&?page={{ page_obj.next_page_number }}">next</a>#}
-{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
-{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#</div>#}
-{#{% if wordlists.has_other_pages %}#}
-{#    <div class="pagination">#}
-{#        {% if wordlists.has_previous %}#}
-{#            <a href="?page={{ wordlists.previous_page_number }}{% if query %}&{{ query }}{% endif %}">&laquo;</a>#}
-{#        {% endif %}#}
-{#        {% for num in wordlists.paginator.page_range %}#}
-{#            {% if wordlists.number == num %}#}
-{#                <span class="current-page">{{ num }}</span>#}
-{#            {% elif num > wordlists.number|add:'-3' and num < wordlists.number|add:'3' %}#}
-{#                <a href="?page={{ num }}{% if query %}&{{ query }}{% endif %}">{{ num }}</a>#}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-{#        {% if wordlists.has_next %}#}
-{#            <a href="?page={{ wordlists.next_page_number }}{% if query %}&{{ query }}{% endif %}">&raquo;</a>#}
-{#        {% endif %}#}
-{#    </div>#}
-{#{% endif %}#}
-
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -128,22 +75,43 @@
                 <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
             {% endif %}
         {% endif %}
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
 
         {% if page_obj.has_next %}
             {% if category %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span>{{ num }}</span>
+                    {% else %}
+                        <a href="?category={{ category }}&page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
                 <a href="?category={{ category }}&page={{ page_obj.next_page_number }}">次へ</a>
                 <a href="?category={{ category }}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
             {% elif keyword %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span>{{ num }}</span>
+                    {% else %}
+                        <a href="?keyword={{ keyword }}&page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
                 <a href="?keyword={{ keyword }}&page={{ page_obj.next_page_number }}">次へ</a>
                 <a href="?keyword={{ keyword }}&page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
             {% else %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span>{{ num }}</span>
+                    {% else %}
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
                 <a href="?page={{ page_obj.next_page_number }}">次へ</a>
                 <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
             {% endif %}
         {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
     </span>
 </div>
 
