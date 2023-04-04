@@ -231,6 +231,13 @@ class CheckUserListView(ListView):
         context['object_list'] = context['wordlists']
         print("■object_list■",context['wordlists'],sep="")
 
+        # 追加
+        user_ids = self.request.GET.getlist('user_id')
+        if user_ids:
+            context['user_qs'] = '&'.join([f'user_id={user_id}' for user_id in user_ids]) + '&'
+        else:
+            context['user_qs'] = ''
+
         # print('■context■',context,sep="")
         return context
 

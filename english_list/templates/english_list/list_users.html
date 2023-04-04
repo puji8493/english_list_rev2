@@ -43,6 +43,27 @@
 <a href="{% url 'english_list:select_users' %}">&nbsp;ユーザー選択&nbsp;</a>
 <a href="{% url 'english_list:list_word' %}">&nbsp;クリア&nbsp;</a>
 
+{#小川先生が書いてくれたコード#}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{{ user_qs }}page={{ page_obj.previous_page_number }}">☆前へ☆</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span>{{ num }}</span>
+            {% else %}
+                <a href="?{{ user_qs }}page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?{{ user_qs }}page={{ page_obj.next_page_number }}">☆次へ☆</a>
+        {% endif %}
+    </span>
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+</div>
 {#カスタムテンプレートを使用　ページネーションコントロール ok #}
 <div class="pagination">
     <span class="step-links">
