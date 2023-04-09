@@ -20,13 +20,13 @@
     {% endif %}
     </p>
 </header>
-
 <br>
 <a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 <a href="{% url 'english_list:login' %}"> ログイン </a>
 <i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
 <br>
+
 
 <form method="get" enctype="multipart/form-data" action="{% url 'english_list:select_users' %}">
     {% for user in form.user_id %}
@@ -65,48 +65,48 @@
     </span>
 </div>
 {#カスタムテンプレートを使用　ページネーションコントロール ok #}
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <span>{{ num }}</span>
-            {% else %}
-                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>
-        {% endif %}
-    </span>
-    <span class="current">
-      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-    </span>
-</div>
-
+{#<div class="pagination">#}
+{#    <span class="step-links">#}
+{#        {% if page_obj.has_previous %}#}
+{#            <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">前へ</a>#}
+{#        {% endif %}#}
+{#        {% for num in page_obj.paginator.page_range %}#}
+{#            {% if page_obj.number == num %}#}
+{#                <span>{{ num }}</span>#}
+{#            {% else %}#}
+{#                <a href="?{% url_replace request 'page' num %}">{{ num }}</a>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#        {% if page_obj.has_next %}#}
+{#            <a href="?{% url_replace request 'page' page_obj.next_page_number %}">次へ</a>#}
+{#        {% endif %}#}
+{#    </span>#}
+{#    <span class="current">#}
+{#      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
+{#    </span>#}
+{#</div>#}
+{##}
 {#クエリ文字列パラメーターを指定 ページネーションコントロール NG #}
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">前へ</a>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <span>{{ num }}</span>
-            {% else %}
-                <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ num }}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ</a>
-        {% endif %}
-    </span>
-    <span class="current">
-      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-    </span>
-</div>
+{#<div class="pagination">#}
+{#    <span class="step-links">#}
+{#        {% if page_obj.has_previous %}#}
+{#            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.previous_page_number }}">前へ</a>#}
+{#        {% endif %}#}
+{#        {% for num in page_obj.paginator.page_range %}#}
+{#            {% if page_obj.number == num %}#}
+{#                <span>{{ num }}</span>#}
+{#            {% else %}#}
+{#                <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ num }}">{{ num }}</a>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#        {% if page_obj.has_next %}#}
+{#            <a href="?{% for id in user_id %}&user_id={{ id }}{% endfor %}&page={{ page_obj.next_page_number }}">次へ</a>#}
+{#        {% endif %}#}
+{#    </span>#}
+{#    <span class="current">#}
+{#      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
+{#    </span>#}
+{#</div>#}
 
 <table>
     <tr>

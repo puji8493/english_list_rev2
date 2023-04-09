@@ -1,3 +1,4 @@
+import requests
 from django.shortcuts import render, HttpResponse, redirect
 from .models import WordLists
 from . import forms
@@ -15,7 +16,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from urllib.parse import urlencode
 import csv
-
+import operator
+from functools import reduce
 
 class MyDispatchMixin:
 
@@ -63,8 +65,21 @@ class WordListView(ListView):
             filters = Q()
             if category:
                 filters &= Q(category=category)
+            # if keyword:
+            #     filters &= Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
             if keyword:
-                filters &= Q(ja_word__icontains=keyword) | Q(en_word__icontains=keyword) | Q(memo__icontains=keyword)
+                # キーワードを空白で分割して、複数のキーワードを取得
+                keywords = keyword.split()
+                # Qオブジェクトのリストを作成し、キーワードを含むものを全てANDで結合する
+                # ｜はOR演算子　クエリの論理式を表現
+                filter_list = [Q(ja_word__icontains=k) | Q(en_word__icontains=k) | Q(memo__icontains=k) for k in keywords]
+
+                # reduce()関数: Pythonのfunctoolsモジュールに定義されており、指定された関数を使用して、反復可能なオブジェクトの要素を集約
+                # operator.and_は、Pythonのビット単位のAND演算子を表す関数
+                # 複数のフィルター条件がある場合、フィルター条件をすべて満たすレコードのみを返します。
+                # (例）filters = Q(field1__icontains='value1') & Q(field2__icontains='value2')
+                filters &= reduce(operator.and_, filter_list)
+
             queryset = queryset.filter(filters)
 
         return queryset.order_by('id')
@@ -212,6 +227,7 @@ class CheckUserListView(ListView):
         """
         ページネーションされたWordListsオブジェクトのリストやページネーション関連のオブジェクトをコンテキスト変数に追加
 
+        :user_ids:リクエストのクエリパラメータからusersという名前のリストを取得
         :form: リクエストのGETパラメーターを含むself.form_classのインスタンスをコンテキスト変数として追加
         :page_obj: ページネーションされたオブジェクトのリスト　 <Page 1 of 1>など
         :paginator: Paginatorオブジェクト
@@ -223,20 +239,23 @@ class CheckUserListView(ListView):
         context['form'] = self.form_class(self.request.GET)
 
         context['page_obj'] = context['page_obj']
-        print("■page_obj■",context['page_obj'],sep="")
+        print("■page_obj■",context['page_obj'],sep="")#<Page 2 of 3>
         context['paginator'] = context['paginator']
-        print("■pagenator■",context['paginator'],sep="")
+        print("■pagenator■",context['paginator'],sep="")#<django.core.paginator.Paginator object at 0x0000024583183C40>
         context['is_paginated'] = context['is_paginated']
-        print("■is_paginated■",context['is_paginated'],sep="")
+        print("■is_paginated■",context['is_paginated'],sep="")#True
         context['object_list'] = context['wordlists']
-        print("■object_list■",context['wordlists'],sep="")
+        print("■object_list■",context['wordlists'],sep="")#QuerySet
 
         # 追加
+        # 'user_qs'で、user_id=6&user_id=9&user_id=12&　というクエリ文字列が生成される
+        # user_idは、['6', '9', '12']
         user_ids = self.request.GET.getlist('user_id')
         if user_ids:
             context['user_qs'] = '&'.join([f'user_id={user_id}' for user_id in user_ids]) + '&'
         else:
             context['user_qs'] = ''
+        print("■user_qs■", context['user_qs'], sep="")
 
         # print('■context■',context,sep="")
         return context
@@ -295,4 +314,13 @@ class SignUpView(CreateView):
         self.object = user
         messages.success(self.request, 'ユーザー登録が完了しました。')
         return HttpResponseRedirect(self.get_success_url())
+
+# vie_simple_app/
+def vue_simple_app(request):
+    requested_url = request.path
+    print('◆requested url◆',requested_url,sep=':')
+    print('◆request header◆',request.headers,sep=':')
+    print('◆request body◆', request.body, sep=':')
+    return render(request, 'english_list/js.html')
+
 
