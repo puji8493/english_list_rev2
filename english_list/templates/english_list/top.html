@@ -8,14 +8,4 @@
     <p>現在の日時は{{ time }}です</p>
     <p>現在の英文・英単語リストの登録件数は{{ count }}件です</p>
 
-    <p>{% if user.is_authenticated %}
-        <h3>ログイン名☆{{ user.get_username }}さん</h3><br>
-        <a href="{% url 'english_list:logout' %}">ログアウト</a>
-        {% else %}
-        <h3>ようこそ　ゲストさん <br>ログインかサインアップしてください</h3><br>
-        <a href="{% url 'english_list:login' %}">ログイン</a><br>
-        <a href="{% url 'english_list:signup' %}">Signup:</a><br>
-   {% endif %} </p>
-    <a href="{% url 'english_list:list_word' %}">一覧リスト</a><br>
-    <a href="{% url 'english_list:form_create_view' %}">新規登録</a>
 {% endblock %}

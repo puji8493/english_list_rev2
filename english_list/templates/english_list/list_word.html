@@ -1,36 +1,45 @@
+{% extends 'english_list/base.html' %}
 {% load static %}
+{% block content %}
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Serch_My_english_lists</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>
-    <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'english_list/css/style.css' %}">
 </head>
+
+<div class="container">
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Serch_My_english_lists</title>#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'english_list/css/style.css' %}"/>#}
+{#    <script src="https://kit.fontawesome.com/41f9c2a86b.js" crossorigin="anonymous"></script>#}
+{#</head>#}
 <body>
-<p>{{ message|safe }} </p>
-<header style="background-color: gray;color: cornsilk;text-align: center;font-size:50px;height: 30px;display: flex;align-items: center;justify-content: center;width: 100%;">
-    <P>{% if user.is_authenticated %}
-        <hi>{{ user.get_username }}さんの英文・英単語リスト</hi>
-    {% else %}
-        <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>
-    {% endif %}
-    </p>
-</header>
+{#<p>{{ message|safe }} </p>#}
+{#<header style="background-color: gray;color: cornsilk;text-align: center;font-size:50px;height: 30px;display: flex;align-items: center;justify-content: center;width: 100%;">#}
+{#    <P>{% if user.is_authenticated %}#}
+{#        <hi>{{ user.get_username }}さんの英文・英単語リスト</hi>#}
+{#    {% else %}#}
+{#        <hi>ようこそ　ゲストさん☆英文・英単語リスト</hi><br>#}
+{#    {% endif %}#}
+{#    </p>#}
+{#</header>#}
 
-<h2>
-    {% if user.is_authenticated %}
-    こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-    {% else %}
-    こんにちは☆ゲストさん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-    {% endif %}
-</h2>
+{#<h2>#}
+{#    {% if user.is_authenticated %}#}
+{#    こんにちは☆{{ user.get_username }}さん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>#}
+{#    {% else %}#}
+{#    こんにちは☆ゲストさん <small><a href="{% url 'english_list:logout' %}"> ログアウト </a></small><i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>#}
+{#    {% endif %}#}
+{#</h2>#}
 
-<a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>
-<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
-<a href="{% url 'english_list:login' %}"> ログイン </a>
-<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>
+{#<a href="{% url 'english_list:form_create_view' %}"> 登録フォームへ </a>#}
+{#<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>#}
+{#<a href="{% url 'english_list:login' %}"> ログイン </a>#}
+{#<i class="fa-solid fa-pen-nib fa-1x" style="color: green"></i><br>#}
 <form method="post" action="{% url 'english_list:list_word' %}">
     {% csrf_token %}
     <p><input type="checkbox" name="my_list" {% if my_list %}checked{% endif %} onchange="this.form.submit();">自分の投稿のみ表示
@@ -154,3 +163,5 @@
 <br>
 </body>
 </html>
+</div>
+{% endblock %}
