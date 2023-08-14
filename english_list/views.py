@@ -297,6 +297,15 @@ class Login(LoginView):
     form_class = forms.LoginForm
     template_name = 'english_list/login.html'
 
+    def form_valid(self, form):
+        # 親クラスのform_validメソッドを呼び出し、ログインを処理
+        response = super().form_valid(form)
+
+        # ログイン成功メッセージを追加
+        messages.success(self.request, 'ログインに成功しました。')
+
+        return response
+
 
 class Logout(LogoutView):
     template_name = 'english_list/logout.html'

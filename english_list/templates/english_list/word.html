@@ -7,9 +7,11 @@
 <body>
     <hi>ID：{{ object.id }}の詳細ページです</hi>
     <p>カテゴリ－：{{ object.category }}</p>
-    <p>日本語：{{ object.ja_word }}</p>
-    <p>英語：{{ object.en_word }}</p>
-    <p>メモ：{{ object.memo }}</p>
+    <p>日本語：{% autoescape off %}{{ object.ja_word|safe }}{% endautoescape %}</p>
+    <p>英語：{% autoescape off %}{{ object.en_word|safe }}{% endautoescape %}</p>
+    <p>メモ：{% autoescape off %}{{ object.memo|safe }}{% endautoescape %}</p>
+
+
     {% if object.file %}
         <p><img width="200px" height="200px" src="{{ object.file.url }}"></p>
     {% else %}

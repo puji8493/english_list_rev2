@@ -2,6 +2,9 @@ from django import forms
 from .models import WordLists
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from accounts.models import CustomUser
+import re
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe  # mark_safeを追加
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
@@ -27,6 +30,28 @@ class BaseForm(forms.ModelForm):
                 raise forms.ValidationError('ファイルサイズは500KB以下にしてください。')
         return file
 
+    def clean_en_word(self):
+        en_word = self.cleaned_data['en_word']
+        en_word = self.convert_links(en_word)
+        return mark_safe(en_word)
+
+    def clean_memo(self):
+        memo = self.cleaned_data['memo']
+        memo = self.convert_links(memo)
+        return mark_safe(memo)
+
+    def convert_links(self, text):
+        pattern = r'(https?://[^\s]+)'
+        repl = r'<a href="\1">\1</a>'
+        converted_text = re.sub(pattern, repl, text)
+        converted_text = converted_text.replace('\n', '<div></div>')
+        return format_html(converted_text)
+    # def convert_links(self, text):
+    #     pattern = r'(https?://[^\s]+)'
+    #     repl = r'<a href="\1">\1</a>'
+    #     converted_text = re.sub(pattern, repl, text)
+    #     converted_text = converted_text.replace('\n', '<br>')
+    #     return converted_text
 
 class UserForm(BaseForm):
     """新規登録するためのフォーム BaseFormを継承

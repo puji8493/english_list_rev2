@@ -144,9 +144,29 @@
         <tr>
             <td class="td_id">{{ object.id }}</td>
             <td class="td_category">{{ object.category }}</td>
-            <td class="td_ja_word">{{ object.ja_word }}</td>
-            <td class="td_en_word">{{ object.en_word }}</td>
-            <td class="td_memo">{{ object.memo }}</td>
+{#            <td class="td_ja_word">{{ object.ja_word|urlize|linebreaksbr|safe }}</td>#}
+{#            <td class="td_en_word">{{ object.en_word|urlize|linebreaksbr|safe }}</td>#}
+{#            <td class="td_memo">{{ object.memo|urlize|linebreaksbr|safe }}</td>#}
+
+{#            <td class="td_ja_word">{{ object.ja_word|linebreaksbr }}</td>#}
+{#            <td class="td_en_word">{{ object.en_word|linebreaksbr }}</td>#}
+{#            <td class="td_memo">{{ object.memo|linebreaksbr }}</td>#}
+
+            <td class="td_ja_word">{% autoescape off %}{{ object.ja_word|safe }}{% endautoescape %}</td>
+            <td class="td_en_word">{% autoescape off %}{{ object.en_word|safe }}{% endautoescape %}</td>
+            <td class="td_memo">{% autoescape off %}{{ object.memo|safe }}{% endautoescape %}</td>
+
+{#            <td class="td_ja_word">{% autoescape off %}{{ object.ja_word|convert_links }}{% endautoescape %}</td>#}
+{#            <td class="td_en_word">{% autoescape off %}{{ object.en_word|convert_links }}{% endautoescape %}</td>#}
+{#            <td class="td_memo">{% autoescape off %}{{ object.memo|convert_links }}{% endautoescape %}</td>#}
+
+
+
+{#            <td class="td_ja_word">{% autoescape off %}{{ object.ja_word|urlizetrunc:"200"|linebreaksbr }}{% endautoescape %}</td>#}
+{#            <td class="td_en_word">{% autoescape off %}{{ object.en_word|urlizetrunc:"200"|linebreaksbr }}{% endautoescape %}</td>#}
+{#            <td class="td_memo">{% autoescape off %}{{ object.memo|urlizetrunc:"200"|linebreaksbr }}{% endautoescape %}</td>#}
+
+
             {% if object.file %}
                 <td class="td_image"><img width="100px" height="100px" src="{{ object.file.url }}"></td>
             {% else %}
