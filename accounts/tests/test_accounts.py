@@ -19,7 +19,7 @@ class TestAuthentication(TestCase):
         response = self.client.get(self.login_url)
         self.assertEqual(response.status_code, 200)
 
-    def test_create_user(self):
+    def test_create_user_follow_flse(self):
         """
         ユーザー登録を行い、ログインに成功することを確認する
         Userオブジェクト: Userは、Djangoが提供するデフォルトのユーザーモデルです。get_user_model()関数を使用して取得されています。
@@ -35,7 +35,8 @@ class TestAuthentication(TestCase):
         # self.client: Djangoのテストクライアントオブジェクト
         # これを使用して、テスト中にリクエストをシミュレートしてビューをテストできます
         # self.clientのpostメソッドを使用して、指定されたURLに対してPOSTリクエストを送信
-        response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'testpassword'})
+        # follow=False にすると、302/リダイレクト先のURLを返す
+        response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'testpassword'},follow=False)
 
         # loginメソッドを使用して、指定したユーザー名とパスワードでログインを試みています
         # ログインに成功すると、ステータスコードが "english_list:list_word"のページに遷移する
@@ -46,12 +47,34 @@ class TestAuthentication(TestCase):
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
+
         # ログインに成功すると、ステータスコードが "english_list:list_word"のページに遷移する
         # 302 (リダイレクト) になるか確認
         self.assertEqual(response.status_code, 302)
         # リダイレクト先のURLが予想通りか確認
+        # リダイレクト先でのGETリクエストのステータスコードを調べたい時に使う
         self.assertRedirects(response, expected_url=self.english_list_url, fetch_redirect_response=True)
-        # self.assertRedirects(response, expected_url=self.english_list_url, fetch_redirect_response=False)
+
+
+    def test_create_user_follow_true(self):
+        """
+        ログインに成功すると、"english_list:list_word"のページに遷移する
+        follow=True リダイレクト先のURLを返す
+        """
+        user = User.objects.create_user(username='testuser', password='testpassword')
+
+        response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'testpassword'},follow=True)
+
+        # loginメソッドを使用して、指定したユーザー名とパスワードでログインを試みています
+        # ログインに成功すると、ステータスコードが "english_list:list_word"のページに遷移する
+        login_result = self.client.login(username=user.username, password='testpassword')
+
+        # ログインに成功すると、ステータスコードが "english_list:list_word"のページに遷移する
+        # 200 になるか確認
+        self.assertEqual(response.status_code, 200)
+        # リダイレクト先のURLが予想通りか確認
+        # リダイレクト先でのGETリクエストのステータスコードを調べたい時に使う
+        self.assertRedirects(response, expected_url=self.english_list_url, fetch_redirect_response=True)
 
     def test_login_with_invalid_user(self):
         """
